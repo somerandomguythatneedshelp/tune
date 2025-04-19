@@ -1,14 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import { Howl } from 'howler';
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaStepForward, FaStepBackward, FaHeart, FaRegHeart, FaMusic, FaTimes } from 'react-icons/fa';
 import { Track, getAllTracks, LyricLine, parseLRC } from '@/utils/audioUtils';
 import Marquee from 'react-fast-marquee';
 import FullScreenPlayer from './FullScreenPlayer';
+import Image from 'next/image';
 
 interface MusicPlayerProps {
-  initialTrack?: Track;
+  tracks: Track[];
+  currentTrackIndex: number;
+  onTrackChange: (index: number) => void;
 }
 
 // Marquee text component for long titles
@@ -61,35 +64,35 @@ const MarqueeText = ({ text, className }: { text: string; className?: string }) 
   );
 };
 
-export default function MusicPlayer({ initialTrack }: MusicPlayerProps) {
-  const [tracks, setTracks] = useState<Track[]>([]);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState<number>(0.5);
-  const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(0.5);
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  const soundRef = useRef<Howl | null>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isIOS, setIsIOS] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
   const [lyrics, setLyrics] = useState<LyricLine[]>([]);
   const [currentLyricIndex, setCurrentLyricIndex] = useState(-1);
-  const soundRef = useRef<Howl | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const [showFullScreen, setShowFullScreen] = useState(false);
 
   useEffect(() => {
     // Check if device is iOS
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream);
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as Window & { MSStream?: unknown }).MSStream);
   }, []);
 
   useEffect(() => {
     const loadTracks = async () => {
       try {
-        const loadedTracks = await getAllTracks();
-        setTracks(loadedTracks);
+        await getAllTracks();
         setIsLoading(false);
       } catch (error) {
         console.error('Error loading tracks:', error);
@@ -101,15 +104,20 @@ export default function MusicPlayer({ initialTrack }: MusicPlayerProps) {
   }, []);
 
   useEffect(() => {
-    if (initialTrack && tracks.length > 0) {
-      const index = tracks.findIndex(track => track.id === initialTrack.id);
-      if (index !== -1) {
-        setCurrentTrackIndex(index);
-      }
+    if (currentTrackIndex !== -1 && tracks.length > 0) {
+      setCurrentTrack(tracks[currentTrackIndex]);
     }
-  }, [initialTrack, tracks]);
+  }, [currentTrackIndex, tracks]);
 
-  const currentTrack = tracks[currentTrackIndex];
+  const playNextTrack = useCallback(() => {
+    if (tracks.length === 0) return;
+    onTrackChange((currentTrackIndex + 1) % tracks.length);
+  }, [tracks.length, currentTrackIndex, onTrackChange]);
+
+  const playPreviousTrack = useCallback(() => {
+    if (tracks.length === 0) return;
+    onTrackChange((currentTrackIndex - 1 + tracks.length) % tracks.length);
+  }, [tracks.length, currentTrackIndex, onTrackChange]);
 
   useEffect(() => {
     if (!currentTrack) return;
@@ -193,19 +201,19 @@ export default function MusicPlayer({ initialTrack }: MusicPlayerProps) {
       });
 
       navigator.mediaSession.setActionHandler('play', () => {
-        if (soundRef.current) {
+        if (soundRef.current && !soundRef.current.playing()) {
           soundRef.current.play();
         }
       });
       
       navigator.mediaSession.setActionHandler('pause', () => {
-        if (soundRef.current) {
+        if (soundRef.current && soundRef.current.playing()) {
           soundRef.current.pause();
         }
       });
 
-      navigator.mediaSession.setActionHandler('previoustrack', () => playPreviousTrack());
-      navigator.mediaSession.setActionHandler('nexttrack', () => playNextTrack());
+      navigator.mediaSession.setActionHandler('previoustrack', playPreviousTrack);
+      navigator.mediaSession.setActionHandler('nexttrack', playNextTrack);
     }
 
     return () => {
@@ -216,7 +224,7 @@ export default function MusicPlayer({ initialTrack }: MusicPlayerProps) {
         clearInterval(progressIntervalRef.current);
       }
     };
-  }, [currentTrack?.audioUrl]);
+  }, [currentTrack, playNextTrack, playPreviousTrack, volume]);
 
   // Separate effect for volume changes
   useEffect(() => {
@@ -231,16 +239,6 @@ export default function MusicPlayer({ initialTrack }: MusicPlayerProps) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
   }, [isIOS]);
-
-  const playNextTrack = () => {
-    if (tracks.length === 0) return;
-    setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % tracks.length);
-  };
-
-  const playPreviousTrack = () => {
-    if (tracks.length === 0) return;
-    setCurrentTrackIndex((prevIndex) => (prevIndex - 1 + tracks.length) % tracks.length);
-  };
 
   const togglePlay = () => {
     if (!soundRef.current) return;
@@ -428,10 +426,13 @@ export default function MusicPlayer({ initialTrack }: MusicPlayerProps) {
                 >
                   <div className="flex items-center space-x-4 pl-4 sm:pl-6">
                     <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden flex-shrink-0">
-                      <img 
-                        src={currentTrack.coverArt} 
-                        alt="Cover art" 
+                      <Image
+                        src={currentTrack.coverArt}
+                        alt={currentTrack.title}
+                        width={64}
+                        height={64}
                         className="w-full h-full object-cover"
+                        priority
                       />
                     </div>
                     <div className="min-w-0 max-w-[180px] sm:max-w-[200px]">
@@ -485,10 +486,13 @@ export default function MusicPlayer({ initialTrack }: MusicPlayerProps) {
                   onClick={() => setShowFullScreen(true)}
                 >
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden flex-shrink-0">
-                    <img 
-                      src={currentTrack.coverArt} 
-                      alt="Cover art" 
+                    <Image
+                      src={currentTrack.coverArt}
+                      alt={currentTrack.title}
+                      width={64}
+                      height={64}
                       className="w-full h-full object-cover"
+                      priority
                     />
                   </div>
                   <div className="min-w-0 flex-1">

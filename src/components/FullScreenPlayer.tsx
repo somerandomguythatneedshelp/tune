@@ -1,14 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Track } from '@/utils/audioUtils';
 import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaStar, FaEllipsisH, FaMusic, FaList } from 'react-icons/fa';
-import { HiOutlineWifi } from 'react-icons/hi';
 import { IoVolumeMedium } from 'react-icons/io5';
 import { FastAverageColor } from 'fast-average-color';
-
-// @ts-ignore
-import ColorThief from 'node-colorthief';
-
-type RGB = [number, number, number];
+import Image from 'next/image';
 
 interface FullScreenPlayerProps {
   track: Track & { explicit?: boolean };
@@ -52,7 +47,7 @@ export default function FullScreenPlayer({
   useEffect(() => {
     const loadImage = async () => {
       try {
-        const img = new Image();
+        const img = document.createElement('img');
         img.crossOrigin = 'Anonymous';
         
         img.onload = async () => {
@@ -162,10 +157,13 @@ export default function FullScreenPlayer({
       <div className="flex-1 flex flex-col items-center justify-center px-8 -mt-12">
         {/* Album Art */}
         <div className="w-60 h-60 sm:w-72 sm:h-72 rounded-lg overflow-hidden shadow-2xl mb-8">
-          <img 
-            src={track.coverArt} 
-            alt="Cover art" 
+          <Image
+            src={track.coverArt}
+            alt={track.title}
+            width={300}
+            height={300}
             className="w-full h-full object-cover"
+            priority
           />
         </div>
         

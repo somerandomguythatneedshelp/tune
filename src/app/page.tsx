@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import MusicPlayer from '@/components/MusicPlayer';
 import { Track, getAllTracks, getTracksByArtist, getTracksByAlbum } from '@/utils/audioUtils';
+import Image from 'next/image';
 
 export default function Home() {
   const [selectedTrack, setSelectedTrack] = useState<Track | undefined>();
@@ -145,9 +146,11 @@ export default function Home() {
                 className="bg-gray-900/50 hover:bg-gray-800/50 transition-colors rounded-lg p-3 sm:p-4 group cursor-pointer"
               >
                 <div className="relative aspect-square mb-3 sm:mb-4 rounded-md overflow-hidden bg-gray-800">
-                  <img 
+                  <Image 
                     src={track.coverArt} 
                     alt="Album cover" 
+                    width={300}
+                    height={300}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
@@ -174,7 +177,11 @@ export default function Home() {
       </div>
 
       {/* Music Player */}
-      <MusicPlayer initialTrack={selectedTrack} />
+      <MusicPlayer 
+        tracks={tracks}
+        currentTrackIndex={tracks.findIndex(track => track.id === selectedTrack?.id) || 0}
+        onTrackChange={(index) => setSelectedTrack(tracks[index])}
+      />
     </main>
   );
 }

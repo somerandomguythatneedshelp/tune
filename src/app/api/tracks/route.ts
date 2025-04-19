@@ -40,7 +40,7 @@ function getCoverArtPath(dir: string, artist: string, album?: string): string {
   return defaultCover;
 }
 
-function scanDirectory(dir: string, basePath: string = ''): Track[] {
+function scanDirectory(dir: string): Track[] {
   const tracks: Track[] = [];
   let trackId = 1;
 
@@ -114,8 +114,12 @@ function scanDirectory(dir: string, basePath: string = ''): Track[] {
   return tracks;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const artist = searchParams.get('artist');
+    const album = searchParams.get('album');
+
     const musicDir = path.join(process.cwd(), 'public', 'music');
     
     // Check if music directory exists
@@ -123,7 +127,15 @@ export async function GET() {
       return NextResponse.json({ error: 'Music directory not found' }, { status: 404 });
     }
 
-    const tracks = scanDirectory(musicDir);
+    let tracks = scanDirectory(musicDir);
+    
+    // Filter tracks if artist or album is specified
+    if (artist) {
+      tracks = tracks.filter(track => track.artist === artist);
+    }
+    if (album) {
+      tracks = tracks.filter(track => track.album === album);
+    }
     
     if (tracks.length === 0) {
       return NextResponse.json({ error: 'No tracks found' }, { status: 404 });
@@ -131,7 +143,7 @@ export async function GET() {
 
     return NextResponse.json(tracks);
   } catch (error) {
-    console.error('Error scanning music directory:', error);
-    return NextResponse.json({ error: 'Failed to scan music directory' }, { status: 500 });
+    console.error('Error in tracks API:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 } 
