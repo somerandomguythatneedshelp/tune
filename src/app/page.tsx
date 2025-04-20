@@ -169,6 +169,13 @@ export default function Home() {
                 <p className="text-gray-400 text-xs sm:text-sm line-clamp-1">
                   {track.artist}
                   {track.album && ` • ${track.album}`}
+                  {track.lyricsUrl && (
+                    <span className="ml-1 inline-flex items-center">
+                      <span className="bg-green-500 text-xs text-black font-medium rounded-sm px-1 py-0.5 ml-1">
+                        LYRICS
+                      </span>
+                    </span>
+                  )}
                 </p>
               </div>
             ))}

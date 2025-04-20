@@ -283,13 +283,26 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
 
   const loadLyrics = async (lyricsUrl: string | undefined) => {
     if (!lyricsUrl) {
+      console.log('No lyrics URL provided');
       setLyrics([]);
       return;
     }
+    
+    console.log('Loading lyrics from:', lyricsUrl);
     try {
       const response = await fetch(lyricsUrl);
+      if (!response.ok) {
+        console.error('Failed to fetch lyrics:', response.status, response.statusText);
+        setLyrics([]);
+        return;
+      }
+      
       const text = await response.text();
+      console.log('Lyrics content length:', text.length);
+      
       const parsedLyrics = parseLRC(text);
+      console.log('Parsed lyrics count:', parsedLyrics.length);
+      
       setLyrics(parsedLyrics);
     } catch (error) {
       console.error('Error loading lyrics:', error);
@@ -300,8 +313,12 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
   useEffect(() => {
     if (currentTrack?.lyricsUrl) {
       loadLyrics(currentTrack.lyricsUrl);
+      // Automatically show lyrics panel when lyrics are available
+      setShowLyrics(true);
     } else {
       setLyrics([]);
+      // Hide lyrics panel when no lyrics are available
+      setShowLyrics(false);
     }
   }, [currentTrack]);
 
@@ -367,6 +384,8 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
           onPrevious={playPreviousTrack}
           volume={volume}
           onVolumeChange={handleVolumeChange}
+          lyrics={lyrics}
+          currentLyricIndex={currentLyricIndex}
         />
       )}
 
@@ -378,7 +397,10 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
       >
         <div className="p-4 h-full flex flex-col">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-white font-medium text-lg">Lyrics</h2>
+            <div>
+              <h2 className="text-white font-medium text-lg">Lyrics</h2>
+              <p className="text-gray-400 text-sm mt-1">{currentTrack.title} - {currentTrack.artist}</p>
+            </div>
             <button 
               onClick={() => setShowLyrics(false)}
               className="text-gray-400 hover:text-white transition-colors p-2"
@@ -387,19 +409,30 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
             </button>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <div className="space-y-2">
-              {lyrics.map((line, index) => (
-                <div 
-                  key={index}
-                  className={`transition-colors duration-300 ${
-                    index === currentLyricIndex 
-                      ? 'text-green-500 font-medium' 
-                      : 'text-gray-400'
-                  }`}
-                >
-                  {line.text}
+            <div className="space-y-4 py-2">
+              {lyrics.length === 0 ? (
+                <div className="text-gray-400 text-center py-8">
+                  No lyrics available for this track
                 </div>
-              ))}
+              ) : (
+                lyrics.map((line, index) => (
+                  <div 
+                    key={index}
+                    ref={index === currentLyricIndex ? (el) => {
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }
+                    } : null}
+                    className={`transition-all duration-300 px-4 py-2 rounded-md ${
+                      index === currentLyricIndex 
+                        ? 'text-green-500 font-medium bg-green-900/20 transform scale-105' 
+                        : 'text-gray-400'
+                    }`}
+                  >
+                    {line.text}
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -475,6 +508,20 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
                         <path d="M17 8.5C17 7.94772 17.4477 7.5 18 7.5C18.3 7.5 18.5841 7.62179 18.7854 7.82308L25.7854 14.9231C26.0813 15.1217 26.25 15.4543 26.25 15.8C26.25 16.1457 26.0813 16.4783 25.7854 16.6769L18.7854 23.7769C18.5841 23.9782 18.3 24.1 18 24.1C17.4477 24.1 17 23.6523 17 23.1V8.5Z" fill="currentColor"/>
                       </svg>
                     </button>
+                    {currentTrack.lyricsUrl && (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowLyrics(!showLyrics);
+                        }}
+                        className={`text-gray-300 hover:text-white transition-all duration-300 transform active:scale-[0.95] relative p-2 rounded-full group -ml-2 ${
+                          showLyrics ? 'text-green-500' : ''
+                        }`}
+                      >
+                        <div className="absolute inset-0 bg-gray-500/0 group-active:bg-gray-500/25 rounded-full transition-all duration-300 ease-out"></div>
+                        <FaMusic size={18} className="transform transition-transform duration-300 ease-out relative z-10" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </>

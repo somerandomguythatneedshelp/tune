@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Track } from '@/utils/audioUtils';
+import { Track, LyricLine } from '@/utils/audioUtils';
 import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaStar, FaEllipsisH, FaMusic, FaList } from 'react-icons/fa';
 import { IoVolumeMedium } from 'react-icons/io5';
+import { MdOutlineLyrics } from 'react-icons/md';
 import { FastAverageColor } from 'fast-average-color';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface FullScreenPlayerProps {
   track: Track & { explicit?: boolean };
@@ -16,6 +18,8 @@ interface FullScreenPlayerProps {
   onPrevious: () => void;
   volume: number;
   onVolumeChange: (value: number) => void;
+  lyrics: LyricLine[];
+  currentLyricIndex: number;
 }
 
 export default function FullScreenPlayer({
@@ -28,7 +32,9 @@ export default function FullScreenPlayer({
   onNext,
   onPrevious,
   volume,
-  onVolumeChange
+  onVolumeChange,
+  lyrics,
+  currentLyricIndex
 }: FullScreenPlayerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [gradientColors, setGradientColors] = useState<string[]>(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
@@ -36,12 +42,21 @@ export default function FullScreenPlayer({
   const [dragStartY, setDragStartY] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const currentLyricRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Trigger entrance animation after mount
     requestAnimationFrame(() => {
       setIsVisible(true);
     });
+
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+    
+    // Re-enable scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, []);
 
   useEffect(() => {
@@ -93,11 +108,12 @@ export default function FullScreenPlayer({
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    const currentY = e.touches[0].clientY;
-    const offset = currentY - dragStartY;
-    if (offset < 0) return; // Prevent dragging up
-    setDragOffset(offset);
+    if (isDragging) {
+      const currentY = e.touches[0].clientY;
+      const offset = currentY - dragStartY;
+      if (offset < 0) return; // Prevent dragging up
+      setDragOffset(offset);
+    }
   };
 
   const handleTouchEnd = () => {
@@ -120,16 +136,71 @@ export default function FullScreenPlayer({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  // Calculate dynamic spacing based on lyric line count and length
+  const calculateLyricSpacing = (text: string): number => {
+    // Count the number of lines by counting newlines
+    const lines = text.split('\n');
+    const lineCount = lines.length;
+    
+    // Check for long lines that might wrap
+    const hasLongLines = lines.some(line => line.length > 35);
+    
+    // Base spacing is 120px
+    const baseSpacing = 120;
+    
+    // Adjust spacing: 
+    // - For single-line lyrics: keep base spacing
+    // - For multi-line lyrics: add extra space (25px per additional line)
+    // - For lines that might wrap, add extra space
+    let extraSpacing = (lineCount - 1) * 25; // 25px per additional line
+    
+    // Add extra for potentially wrapping long lines
+    if (hasLongLines) {
+      extraSpacing += 20;
+    }
+    
+    // Cap at a reasonable maximum
+    return baseSpacing + Math.min(extraSpacing, 100);
+  };
+  
+  // Get current lyric height
+  const getCurrentLyricHeight = (text: string): number => {
+    const lines = text.split('\n');
+    const lineCount = lines.length;
+    
+    // Check if any line is long and might wrap
+    const longLineCount = lines.filter(line => line.length > 35).length;
+    
+    // Base height for single line is 80px
+    // Add 35px per normal line and 60px per long line (might wrap)
+    return Math.max(80, (lineCount - longLineCount) * 35 + longLineCount * 60);
+  };
+
+  // Get current lyric text
+  const currentLyricText = currentLyricIndex >= 0 && lyrics.length > 0 
+    ? lyrics[currentLyricIndex].text 
+    : "♪ ♪ ♪";
+
+  // Calculate spacing for the upcoming lyrics
+  const upcomingLyricsTopPosition = calculateLyricSpacing(currentLyricText);
+  
+  // Calculate height for the current lyric container
+  const currentLyricHeight = getCurrentLyricHeight(currentLyricText);
+
   return (
-    <div 
+    <motion.div 
       ref={containerRef}
-      className={`fixed inset-0 z-50 flex flex-col touch-none ${
-        isVisible ? 'animate-slideUp' : 'animate-slideDown'
-      }`}
+      className="fixed inset-0 z-50 flex flex-col touch-none overscroll-none"
+      initial={{ opacity: 0, y: "100%" }}
+      animate={{ 
+        opacity: 1, 
+        y: dragOffset > 0 ? `${dragOffset}px` : 0,
+        transition: { duration: 0.4, ease: "easeOut" }
+      }}
+      exit={{ opacity: 0, y: "100%", transition: { duration: 0.3 } }}
       style={{
         background: `linear-gradient(180deg, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
         backdropFilter: 'blur(30px)',
-        transform: `translateY(${dragOffset}px)`,
         transition: isDragging ? 'none' : 'transform 0.3s ease-out'
       }}
       onTouchStart={handleTouchStart}
@@ -137,7 +208,7 @@ export default function FullScreenPlayer({
       onTouchEnd={handleTouchEnd}
     >
       {/* Top Bar */}
-      <div className="flex justify-between items-center p-4 mt-2">
+      <div className="flex justify-between items-center p-4 pt-8">
         <div className="w-8" /> {/* Spacer */}
         <div 
           className="h-1 w-8 bg-gray-600 rounded-full"
@@ -153,96 +224,253 @@ export default function FullScreenPlayer({
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 -mt-12">
-        {/* Album Art */}
-        <div className="w-60 h-60 sm:w-72 sm:h-72 rounded-lg overflow-hidden shadow-2xl mb-8">
-          <Image
-            src={track.coverArt}
-            alt={track.title}
-            width={300}
-            height={300}
-            className="w-full h-full object-cover"
-            priority
-          />
-        </div>
-        
-        {/* Song Info */}
-        <div className="w-full max-w-md mb-8">
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-white text-xl font-semibold">{track.title}</h2>
-            {track.explicit && (
-              <span className="bg-gray-500/30 text-white/80 text-xs px-1 rounded">E</span>
+      {/* Main Content - Apple Music Style Layout */}
+      <div className="flex-1 flex flex-col px-4 sm:px-8">
+        {/* Album Art and Info */}
+        <motion.div 
+          className="flex items-center mb-6 mt-2"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+        >
+          <motion.div 
+            className="w-12 h-12 rounded overflow-hidden mr-4 flex-shrink-0"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Image
+              src={track.coverArt}
+              alt={track.title}
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+              priority
+            />
+          </motion.div>
+          <div className="flex-1 min-w-0">
+            <motion.h2 
+              className="text-white text-lg font-bold truncate"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+            >
+              {track.title}
+            </motion.h2>
+            <motion.p 
+              className="text-white/70 text-sm truncate"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
+            >
+              {track.artist}
+            </motion.p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <motion.button 
+              className="text-white/60 p-2"
+              whileHover={{ scale: 1.1, color: "#ffffff" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FaMusic size={18} />
+            </motion.button>
+            <motion.button 
+              className="text-white/60 p-2"
+              whileHover={{ scale: 1.1, color: "#ffffff" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FaEllipsisH size={18} />
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Lyrics Section with Continuous Motion */}
+        <div className="flex-1 flex flex-col pt-12 my-8">
+          {/* Lyrics Display Area with Absolute Positioning */}
+          <div className="relative w-full overflow-hidden" style={{ height: '70vh' }}>
+            {/* Current Lyric Container - Fixed Position */}
+            <div 
+              ref={currentLyricRef}
+              className="absolute top-0 left-0 right-0"
+              style={{ 
+                minHeight: `${currentLyricHeight}px`,
+                zIndex: 10,
+                perspective: '1000px',
+                paddingTop: '10px', // Add padding at the top to prevent cutoff
+                paddingBottom: '10px'
+              }}
+            >
+              <AnimatePresence mode="popLayout">
+                <motion.div
+                  key={`current-lyric-container-${currentLyricIndex}`}
+                  className="w-full flex items-center justify-center px-6"
+                >
+                  <motion.h1 
+                    key={`current-lyric-${currentLyricIndex}`}
+                    initial={{ y: 70, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -70, opacity: 0 }}
+                    transition={{ 
+                      type: "spring", 
+                      stiffness: 350, 
+                      damping: 25,
+                      mass: 0.7
+                    }}
+                    className="text-3xl font-bold text-center text-white break-words whitespace-pre-wrap w-full"
+                    style={{
+                      lineHeight: '1.3',
+                      maxWidth: '100%',
+                      overflowWrap: 'break-word',
+                      wordBreak: 'break-word',
+                      hyphens: 'auto'
+                    }}
+                  >
+                    {currentLyricText}
+                  </motion.h1>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Upcoming Lyrics Section */}
+            <div 
+              className="absolute left-0 right-0 px-6" 
+              style={{ 
+                top: `${upcomingLyricsTopPosition}px`
+              }}
+            >
+              {lyrics.length > 0 && currentLyricIndex < lyrics.length - 1 
+                ? lyrics.slice(currentLyricIndex + 1, currentLyricIndex + 4).map((line, index) => {
+                    // Calculate dynamic spacing between upcoming lyrics
+                    const prevLineText = index > 0 
+                      ? lyrics[currentLyricIndex + index].text 
+                      : currentLyricText;
+                    
+                    // Additional spacing based on previous lyric complexity
+                    const lineSpacing = index === 0 ? 0 : Math.min(prevLineText.split('\n').length * 15, 40);
+                    
+                    return (
+                      <motion.div 
+                        key={`upcoming-${currentLyricIndex}-${index}`}
+                        className="mb-10"
+                        style={{
+                          marginTop: index === 0 ? 0 : lineSpacing
+                        }}
+                        initial={{ y: 70, opacity: 0 }}
+                        animate={{ 
+                          y: 0, 
+                          opacity: Math.max(0.4, 1 - (index * 0.2))
+                        }}
+                        transition={{ 
+                          delay: index * 0.08,
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 30
+                        }}
+                      >
+                        <p 
+                          className="text-xl font-bold text-center text-white/60 break-words whitespace-pre-wrap w-full"
+                          style={{
+                            lineHeight: '1.3',
+                            maxWidth: '100%',
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word',
+                            hyphens: 'auto'
+                          }}
+                        >
+                          {line.text}
+                        </p>
+                      </motion.div>
+                    );
+                  })
+                : null
+              }
+            </div>
+
+            {/* Previous lyric that's fading out and moving up */}
+            {currentLyricIndex > 0 && lyrics.length > 0 && (
+              <motion.div
+                key={`prev-lyric-${currentLyricIndex-1}`}
+                initial={{ y: 0, opacity: 0 }}
+                animate={{ y: -70, opacity: 0 }}
+                className="absolute top-0 left-0 right-0 flex items-center justify-center px-6"
+                style={{
+                  zIndex: 9,
+                  height: `${currentLyricHeight}px`
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 350, 
+                  damping: 25,
+                  mass: 0.7
+                }}
+              >
+                <span 
+                  className="text-3xl font-bold text-center text-white break-words whitespace-pre-wrap w-full"
+                  style={{
+                    lineHeight: '1.3',
+                    maxWidth: '100%',
+                    overflowWrap: 'break-word',
+                    wordBreak: 'break-word',
+                    hyphens: 'auto'
+                  }}
+                >
+                  {lyrics[currentLyricIndex - 1].text}
+                </span>
+              </motion.div>
             )}
           </div>
-          <p className="text-white/60 text-base">{track.artist || 'Unknown Artist'}</p>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full max-w-md mb-6">
-          <div className="relative h-[3px] bg-white/20 rounded-full">
-            <div 
-              className="absolute h-full bg-white rounded-full"
-              style={{ width: `${(currentTime / duration) * 100}%` }}
-            />
+        {/* Controls - Bottom */}
+        <motion.div 
+          className="fixed bottom-0 left-0 right-0 bg-black/10 backdrop-blur-sm pb-8 pt-4 px-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          {/* Progress Bar */}
+          <div className="max-w-xl mx-auto mb-4">
+            <div className="relative h-[3px] bg-white/20 rounded-full overflow-hidden">
+              <motion.div 
+                className="absolute h-full bg-white rounded-full"
+                style={{ width: `${(currentTime / duration) * 100}%` }}
+                transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-white/60 mt-2">
+              <span>{formatTime(currentTime)}</span>
+              <span>-{formatTime(duration - currentTime)}</span>
+            </div>
           </div>
-          <div className="flex justify-between text-xs text-white/60 mt-2">
-            <span>{formatTime(currentTime)}</span>
-            <span>-{formatTime(duration - currentTime)}</span>
+
+          {/* Playback Controls */}
+          <div className="flex items-center justify-center space-x-12 max-w-md mx-auto">
+            <motion.button 
+              onClick={onPrevious}
+              className="text-white/80 hover:text-white transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FaStepBackward size={24} />
+            </motion.button>
+            <motion.button 
+              onClick={onPlayPause}
+              className="text-white w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {isPlaying ? <FaPause size={32} /> : <FaPlay size={32} className="ml-1" />}
+            </motion.button>
+            <motion.button 
+              onClick={onNext}
+              className="text-white/80 hover:text-white transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FaStepForward size={24} />
+            </motion.button>
           </div>
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center justify-center space-x-12 mb-8">
-          <button 
-            onClick={onPrevious}
-            className="text-white/80 hover:text-white transition-colors"
-          >
-            <FaStepBackward size={28} />
-          </button>
-          <button 
-            onClick={onPlayPause}
-            className="text-white w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
-          >
-            {isPlaying ? <FaPause size={32} /> : <FaPlay size={32} className="ml-1" />}
-          </button>
-          <button 
-            onClick={onNext}
-            className="text-white/80 hover:text-white transition-colors"
-          >
-            <FaStepForward size={28} />
-          </button>
-        </div>
-
-        {/* Volume Slider */}
-        <div className="w-full max-w-md flex items-center space-x-3 mb-4">
-          <IoVolumeMedium size={20} className="text-white/60" />
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volume}
-            onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-            className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-white"
-          />
-        </div>
-
-        {/* Bottom Controls */}
-        <div className="w-full max-w-md flex justify-between items-center mb-4">
-          <button className="text-white/60 hover:text-white transition-colors">
-            <FaMusic size={20} />
-          </button>
-          <button className="text-white/60 hover:text-white transition-colors">
-            <FaList size={20} />
-          </button>
-        </div>
-
-        {/* Device Name */}
-        <div className="text-white/40 text-sm">
-          PowerLocus Universe
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
-} 
+}
