@@ -147,14 +147,14 @@ export default function Home() {
               >
                 <div className="relative aspect-square mb-3 sm:mb-4 rounded-md overflow-hidden bg-gray-800">
                   <Image 
-                    src={track.coverArt} 
-                    alt="Album cover" 
+                    src={track.coverArt || '/Cover.jpg'} 
+                    alt={`${track.title} cover`} 
                     width={300}
                     height={300}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.src = '/default-cover.jpg';
+                      target.src = '/Cover.jpg';
                     }}
                   />
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
