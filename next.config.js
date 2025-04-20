@@ -17,6 +17,10 @@ const nextConfig = {
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },
+  // Add images configuration to allow external domains
+  images: {
+    domains: ['tune-mu.vercel.app'],
+  },
   env: {
     // Explicitly expose env vars to Next.js
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || '',
