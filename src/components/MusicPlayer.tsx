@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import { Howl } from 'howler';
-import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaStepForward, FaStepBackward, FaHeart, FaRegHeart, FaMusic, FaTimes } from 'react-icons/fa';
+import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaStar, FaEllipsisH, FaMusic, FaList } from 'react-icons/fa';
+import { IoVolumeMedium } from 'react-icons/io5';
+import { MdOutlineLyrics } from 'react-icons/md';
 import { Track, getAllTracks, LyricLine, parseLRC } from '@/utils/audioUtils';
 import Marquee from 'react-fast-marquee';
 import FullScreenPlayer from './FullScreenPlayer';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MusicPlayerProps {
   tracks: Track[];
@@ -74,15 +77,16 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
   const progressRef = useRef<HTMLDivElement>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [showLyrics, setShowLyrics] = useState(false);
   const [lyrics, setLyrics] = useState<LyricLine[]>([]);
   const [currentLyricIndex, setCurrentLyricIndex] = useState(-1);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const [showFullScreen, setShowFullScreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [hoverTime, setHoverTime] = useState<number | null>(null);
+  const [hoverPosition, setHoverPosition] = useState<number | null>(null);
+  const [gradientColors, setGradientColors] = useState<string[]>(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
 
   useEffect(() => {
     // Check if device is iOS
@@ -108,6 +112,53 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
       setCurrentTrack(tracks[currentTrackIndex]);
     }
   }, [currentTrackIndex, tracks]);
+
+  // Extract dominant color from track artwork for gradient
+  useEffect(() => {
+    if (!currentTrack?.coverArt) return;
+
+    const loadImage = async () => {
+      try {
+        const img = document.createElement('img');
+        img.crossOrigin = 'Anonymous';
+        
+        img.onload = async () => {
+          try {
+            const FastAverageColor = (await import('fast-average-color')).FastAverageColor;
+            const fac = new FastAverageColor();
+            const color = await fac.getColor(img);
+            
+            if (color.error) {
+              throw new Error('Could not extract color');
+            }
+            
+            const { value } = color;
+            const colors = [
+              `rgba(${value[0]}, ${value[1]}, ${value[2]}, 0.8)`,
+              `rgba(${value[0]}, ${value[1]}, ${value[2]}, 0.95)`
+            ];
+            
+            setGradientColors(colors);
+          } catch (error) {
+            console.error('Error in color extraction:', error);
+            setGradientColors(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
+          }
+        };
+
+        img.onerror = () => {
+          console.error('Error loading image');
+          setGradientColors(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
+        };
+
+        img.src = currentTrack.coverArt;
+      } catch (error) {
+        console.error('Error in loadImage:', error);
+        setGradientColors(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
+      }
+    };
+
+    loadImage();
+  }, [currentTrack?.coverArt]);
 
   const playNextTrack = useCallback(() => {
     if (tracks.length === 0) return;
@@ -240,7 +291,8 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
     }
   }, [isIOS]);
 
-  const togglePlay = () => {
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!soundRef.current) return;
 
     if (isPlaying) {
@@ -248,31 +300,6 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
     } else {
       soundRef.current.play();
     }
-  };
-
-  // Update volume handler for HTML input events
-  const handleInputVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    handleVolumeChange(newVolume);
-  };
-
-  // Update volume handler for direct number values
-  const handleVolumeChange = (newVolume: number) => {
-    setVolume(newVolume);
-    if (soundRef.current) {
-      soundRef.current.volume(newVolume);
-    }
-  };
-
-  const toggleMute = () => {
-    if (!soundRef.current) return;
-    
-    if (isMuted) {
-      soundRef.current.volume(volume);
-    } else {
-      soundRef.current.volume(0);
-    }
-    setIsMuted(!isMuted);
   };
 
   const formatTime = (seconds: number) => {
@@ -283,12 +310,10 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
 
   const loadLyrics = async (lyricsUrl: string | undefined) => {
     if (!lyricsUrl) {
-      console.log('No lyrics URL provided');
       setLyrics([]);
       return;
     }
     
-    console.log('Loading lyrics from:', lyricsUrl);
     try {
       const response = await fetch(lyricsUrl);
       if (!response.ok) {
@@ -298,11 +323,7 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
       }
       
       const text = await response.text();
-      console.log('Lyrics content length:', text.length);
-      
       const parsedLyrics = parseLRC(text);
-      console.log('Parsed lyrics count:', parsedLyrics.length);
-      
       setLyrics(parsedLyrics);
     } catch (error) {
       console.error('Error loading lyrics:', error);
@@ -313,12 +334,8 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
   useEffect(() => {
     if (currentTrack?.lyricsUrl) {
       loadLyrics(currentTrack.lyricsUrl);
-      // Automatically show lyrics panel when lyrics are available
-      setShowLyrics(true);
     } else {
       setLyrics([]);
-      // Hide lyrics panel when no lyrics are available
-      setShowLyrics(false);
     }
   }, [currentTrack]);
 
@@ -349,11 +366,83 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
     return () => clearInterval(interval);
   }, [isPlaying, lyrics, currentLyricIndex]);
 
+  // Use a more compact player on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Set initial value
+    handleResize();
+    
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Add this handler for progress bar clicks
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!progressRef.current || !soundRef.current) return;
+    
+    const rect = progressRef.current.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    
+    if (isNaN(percent)) return;
+    
+    const newTime = percent * duration;
+    soundRef.current.seek(newTime);
+    setCurrentTime(newTime);
+  };
+
+  // Handle mouse hover on progress bar
+  const handleProgressHover = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!progressRef.current || !duration) return;
+    
+    const rect = progressRef.current.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    
+    if (isNaN(percent)) return;
+    
+    const hoverTimeValue = percent * duration;
+    setHoverTime(hoverTimeValue);
+    setHoverPosition(e.clientX - rect.left);
+  };
+
+  // Clear hover values when mouse leaves
+  const handleProgressLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setHoverTime(null);
+    setHoverPosition(null);
+  };
+
+  // Handle fullscreen toggle
+  const toggleFullscreen = () => {
+    setShowFullScreen(true);
+  };
+
+  // Button click handlers with stopPropagation
+  const handleNextClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    playNextTrack();
+  };
+
+  const handlePrevClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    playPreviousTrack();
+  };
+
   if (isLoading) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-md border-t border-gray-800 p-2 sm:p-4">
-        <div className="max-w-7xl mx-auto text-center text-gray-400 text-sm sm:text-base">
-          Loading tracks...
+      <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-gray-800/50 p-3">
+        <div className="max-w-7xl mx-auto text-center text-gray-400 text-sm">
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-4 h-4 rounded-full bg-green-500/50 animate-pulse"></div>
+            <span>Loading tracks...</span>
+          </div>
         </div>
       </div>
     );
@@ -361,8 +450,8 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
 
   if (!currentTrack) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-md border-t border-gray-800 p-2 sm:p-4">
-        <div className="max-w-7xl mx-auto text-center text-gray-400 text-sm sm:text-base">
+      <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-gray-800/50 p-3">
+        <div className="max-w-7xl mx-auto text-center text-gray-400 text-sm">
           No tracks available
         </div>
       </div>
@@ -371,10 +460,9 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
 
   return (
     <>
-      {/* Full Screen Player */}
       {showFullScreen && (
         <FullScreenPlayer
-          track={{ ...currentTrack, explicit: true }}
+          track={currentTrack}
           isPlaying={isPlaying}
           currentTime={currentTime}
           duration={duration}
@@ -383,270 +471,260 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
           onNext={playNextTrack}
           onPrevious={playPreviousTrack}
           volume={volume}
-          onVolumeChange={handleVolumeChange}
+          onVolumeChange={(v) => setVolume(v)}
           lyrics={lyrics}
           currentLyricIndex={currentLyricIndex}
         />
       )}
 
-      {/* Lyrics Panel */}
-      <div 
-        className={`fixed top-0 right-0 h-full w-[400px] bg-black/90 backdrop-blur-md border-l border-gray-800 transform transition-transform duration-300 ease-in-out ${
-          showLyrics ? 'translate-x-0' : 'translate-x-full'
-        } hidden md:block`}
-      >
-        <div className="p-4 h-full flex flex-col">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h2 className="text-white font-medium text-lg">Lyrics</h2>
-              <p className="text-gray-400 text-sm mt-1">{currentTrack.title.slice(3)} - {currentTrack.artist}</p>
-            </div>
-            <button 
-              onClick={() => setShowLyrics(false)}
-              className="text-gray-400 hover:text-white transition-colors p-2"
-            >
-              <FaTimes />
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            <div className="space-y-4 py-2">
-              {lyrics.length === 0 ? (
-                <div className="text-gray-400 text-center py-8">
-                  No lyrics available for this track
-                </div>
-              ) : (
-                lyrics.map((line, index) => (
-                  <div 
-                    key={index}
-                    ref={index === currentLyricIndex ? (el) => {
-                      if (el) {
-                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      }
-                    } : null}
-                    className={`transition-all duration-300 px-4 py-2 rounded-md ${
-                      index === currentLyricIndex 
-                        ? 'text-green-500 font-medium bg-green-900/20 transform scale-105' 
-                        : 'text-gray-400'
-                    }`}
-                  >
-                    {line.text}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Music Player */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-md border-t border-gray-800 p-2 sm:p-4">
-        <div className="max-w-7xl mx-auto">
-          {/* Progress Bar */}
-          <div className="relative h-1 bg-gray-800 rounded-full mb-2 sm:mb-4">
-            <div 
-              className="absolute h-full bg-green-500 rounded-full transition-all duration-300"
+      {/* Compact Player for Mobile */}
+      {isMobile ? (
+        <motion.div 
+          className="fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t border-white/10 text-white select-none"
+          onClick={toggleFullscreen}
+          ref={containerRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          style={{
+            background: `linear-gradient(180deg, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
+            backdropFilter: 'blur(20px)'
+          }}
+        >
+          {/* Progress Bar - Styled like fullscreen player */}
+          <div className="relative h-[3px] bg-white/20 rounded-full overflow-hidden">
+            <motion.div 
+              className="absolute h-full bg-white rounded-full"
               style={{ width: `${(currentTime / duration) * 100}%` }}
+              transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+              onClick={handleProgressClick}
+              onMouseMove={handleProgressHover}
+              onMouseLeave={handleProgressLeave}
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
-            {isIOS ? (
-              <>
-                {/* iOS Layout */}
-                <div 
-                  className="flex items-center justify-between w-full py-2 cursor-pointer"
-                  onClick={() => setShowFullScreen(true)}
+          <div className="flex items-center justify-between px-5 py-3">
+            <div className="flex items-center flex-1 min-w-0">
+              <motion.div 
+                className="w-10 h-10 mr-3 rounded-lg overflow-hidden flex-shrink-0 shadow-lg"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                {currentTrack?.coverArt && (
+                  <Image
+                    src={currentTrack.coverArt}
+                    alt={currentTrack.title}
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/Cover.jpg';
+                    }}
+                    priority
+                  />
+                )}
+              </motion.div>
+              <div className="min-w-0">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.4 }}
                 >
-                  <div className="flex items-center space-x-4 pl-4 sm:pl-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
-                        src={currentTrack.coverArt}
-                        alt={currentTrack.title.slice(3)}
-                        width={64}
-                        height={64}
-                        className="w-full h-full object-cover"
-                        priority
-                      />
-                    </div>
-                    <div className="min-w-0 max-w-[180px] sm:max-w-[200px]">
-                      <MarqueeText 
-                        text={currentTrack.title.slice(3)} 
-                        className="text-white font-medium text-base sm:text-lg"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        togglePlay();
-                      }}
-                      className="text-gray-300 hover:text-white transition-all duration-300 transform active:scale-[0.95] relative p-2 rounded-full group"
-                    >
-                      <div className="absolute inset-0 bg-gray-500/0 group-active:bg-gray-500/25 rounded-full transition-all duration-300 ease-out"></div>
-                      {isPlaying ? (
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform transition-transform duration-300 ease-out relative z-10">
-                          <rect x="7" y="6" width="6" height="20" rx="2" fill="currentColor"/>
-                          <rect x="19" y="6" width="6" height="20" rx="2" fill="currentColor"/>
-                        </svg>
-                      ) : (
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform transition-transform duration-300 ease-out relative z-10">
-                          <path d="M9 6.5C8.44772 6.5 8 6.94772 8 7.5V24.5C8 25.0523 8.44772 25.5 9 25.5C9.3 25.5 9.58414 25.3782 9.78538 25.1769L23.7854 16.6769C24.0813 16.4783 24.25 16.1457 24.25 15.8C24.25 15.4543 24.0813 15.1217 23.7854 14.9231L9.78538 6.42308C9.58414 6.22179 9.3 6.1 9 6.5Z" fill="currentColor"/>
-                        </svg>
-                      )}
-                    </button>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        playNextTrack();
-                      }}
-                      className="text-gray-300 hover:text-white transition-all duration-300 transform active:scale-[0.95] relative p-2 rounded-full group -ml-2"
-                    >
-                      <div className="absolute inset-0 bg-gray-500/0 group-active:bg-gray-500/25 rounded-full transition-all duration-300 ease-out"></div>
-                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform transition-transform duration-300 ease-out relative z-10">
-                        <path d="M8 8.5C8 7.94772 8.44772 7.5 9 7.5C9.3 7.5 9.58414 7.62179 9.78538 7.82308L16.7854 14.9231C17.0813 15.1217 17.25 15.4543 17.25 15.8C17.25 16.1457 17.0813 16.4783 16.7854 16.6769L9.78538 23.7769C9.58414 23.9782 9.3 24.1 9 24.1C8.44772 24.1 8 23.6523 8 23.1V8.5Z" fill="currentColor"/>
-                        <path d="M17 8.5C17 7.94772 17.4477 7.5 18 7.5C18.3 7.5 18.5841 7.62179 18.7854 7.82308L25.7854 14.9231C26.0813 15.1217 26.25 15.4543 26.25 15.8C26.25 16.1457 26.0813 16.4783 25.7854 16.6769L18.7854 23.7769C18.5841 23.9782 18.3 24.1 18 24.1C17.4477 24.1 17 23.6523 17 23.1V8.5Z" fill="currentColor"/>
-                      </svg>
-                    </button>
-                    {currentTrack.lyricsUrl && (
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowLyrics(!showLyrics);
-                        }}
-                        className={`text-gray-300 hover:text-white transition-all duration-300 transform active:scale-[0.95] relative p-2 rounded-full group -ml-2 ${
-                          showLyrics ? 'text-green-500' : ''
-                        }`}
-                      >
-                        <div className="absolute inset-0 bg-gray-500/0 group-active:bg-gray-500/25 rounded-full transition-all duration-300 ease-out"></div>
-                        <FaMusic size={18} className="transform transition-transform duration-300 ease-out relative z-10" />
-                      </button>
-                    )}
-                  </div>
+                  <MarqueeText 
+                    text={currentTrack?.title?.slice(3) || 'No track selected'} 
+                    className="font-bold text-sm"
+                  />
+                </motion.div>
+                <motion.p 
+                  className="text-white/70 text-xs truncate"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.4 }}
+                >
+                  {currentTrack?.artist || 'Unknown Artist'}
+                </motion.p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <motion.button
+                onClick={handlePrevClick}
+                className="text-white/80 hover:text-white transition-colors p-2"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaStepBackward size={12} />
+              </motion.button>
+              <motion.button
+                onClick={togglePlay}
+                className="text-white w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
+                whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isPlaying ? <FaPause size={12} /> : <FaPlay size={12} className="ml-1" />}
+              </motion.button>
+              <motion.button
+                onClick={handleNextClick}
+                className="text-white/80 hover:text-white transition-colors p-2"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaStepForward size={12} />
+              </motion.button>
+            </div>
+          </div>
+          
+          {/* Time indicators */}
+          <div className="flex justify-between text-xs text-white/60 px-4 pb-1">
+            <span>{formatTime(currentTime)}</span>
+            <span>-{formatTime(duration - currentTime)}</span>
+          </div>
+        </motion.div>
+      ) : (
+        // Regular Player for Desktop - Styled like fullscreen player
+        <motion.div 
+          className="fixed bottom-0 left-0 right-0 border-t border-white/10 text-white select-none"
+          onClick={toggleFullscreen}
+          ref={containerRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          style={{
+            background: `linear-gradient(180deg, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
+            backdropFilter: 'blur(20px)'
+          }}
+        >
+          <div className="max-w-7xl mx-auto">
+            {/* Progress bar for desktop - styled like fullscreen player */}
+            <div className="relative h-[3px] bg-white/20 rounded-full overflow-hidden">
+              <motion.div 
+                className="absolute h-full bg-white rounded-full"
+                style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
+                transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+              />
+              
+              <div 
+                className="absolute inset-0 w-full cursor-pointer"
+                ref={progressRef}
+                onClick={handleProgressClick}
+                onMouseMove={handleProgressHover}
+                onMouseLeave={handleProgressLeave}
+              ></div>
+              
+              {/* Desktop tooltip */}
+              {hoverTime !== null && hoverPosition !== null && (
+                <div 
+                  className="absolute top-0 transform -translate-y-full -translate-x-1/2 bg-black/90 px-2 py-1 rounded text-xs text-white pointer-events-none shadow-lg"
+                  style={{ left: hoverPosition }}
+                >
+                  {formatTime(hoverTime)}
                 </div>
-              </>
-            ) : (
-              <>
-                {/* Desktop Layout */}
-                <div 
-                  className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto max-w-[250px] sm:max-w-[300px] pl-4 sm:pl-6 cursor-pointer"
-                  onClick={() => setShowFullScreen(true)}
+              )}
+            </div>
+            
+            <div className="flex justify-between text-xs text-white/60 px-6 mt-1">
+              <span>{formatTime(currentTime)}</span>
+              <span>-{formatTime(duration - currentTime)}</span>
+            </div>
+            
+            <div className="flex items-center justify-between p-3">
+              {/* Track Info */}
+              <motion.div 
+                className="flex items-center flex-1 min-w-0"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.4 }}
+              >
+                <motion.div 
+                  className="w-12 h-12 mr-4 rounded overflow-hidden flex-shrink-0 shadow-lg"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden flex-shrink-0">
+                  {currentTrack?.coverArt && (
                     <Image
                       src={currentTrack.coverArt}
                       alt={currentTrack.title}
-                      width={64}
-                      height={64}
+                      width={48}
+                      height={48}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/Cover.jpg';
+                      }}
                       priority
                     />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <MarqueeText 
-                      text={currentTrack.title} 
-                      className="text-white font-medium text-sm sm:text-base"
-                    />
-                    {currentTrack.artist && (
-                      <div className="text-gray-400 text-xs truncate">
-                        {currentTrack.artist}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {currentTrack.lyricsUrl && (
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowLyrics(!showLyrics);
-                        }}
-                        className={`text-gray-400 hover:text-white transition-colors flex-shrink-0 ${showLyrics ? 'text-green-500' : ''}`}
-                      >
-                        <FaMusic size={16} />
-                      </button>
-                    )}
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsLiked(!isLiked);
-                      }}
-                      className="text-gray-400 hover:text-white transition-colors flex-shrink-0"
-                    >
-                      {isLiked ? <FaHeart size={16} className="text-green-500" /> : <FaRegHeart size={16} />}
-                    </button>
-                  </div>
+                  )}
+                </motion.div>
+                <div className="min-w-0">
+                  <motion.h2 
+                    className="text-white text-lg font-bold truncate"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.4 }}
+                  >
+                    {currentTrack?.title?.slice(3) || 'No track selected'}
+                  </motion.h2>
+                  <motion.p 
+                    className="text-white/70 text-sm truncate"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4, duration: 0.4 }}
+                  >
+                    {currentTrack?.artist || 'Unknown Artist'}
+                  </motion.p>
                 </div>
+              </motion.div>
 
-                <div className="flex flex-col items-center w-full sm:w-auto order-first sm:order-none">
-                  <div className="flex items-center space-x-4 sm:space-x-6">
-                    <button 
-                      onClick={playPreviousTrack}
-                      className="text-gray-300 hover:text-white transition-all duration-300 transform active:scale-[0.95] relative p-2 rounded-full group"
-                    >
-                      <div className="absolute inset-0 bg-gray-500/0 group-active:bg-gray-500/25 rounded-full transition-all duration-300 ease-out"></div>
-                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform transition-transform duration-300 ease-out relative z-10">
-                        <path d="M24 8.5C24 7.94772 23.5523 7.5 23 7.5C22.7 7.5 22.4159 7.62179 22.2146 7.82308L15.2146 14.9231C14.9187 15.1217 14.75 15.4543 14.75 15.8C14.75 16.1457 14.9187 16.4783 15.2146 16.6769L22.2146 23.7769C22.4159 23.9782 22.7 24.1 23 24.1C23.5523 24.1 24 23.6523 24 23.1V8.5Z" fill="currentColor"/>
-                        <path d="M15 8.5C15 7.94772 14.5523 7.5 14 7.5C13.7 7.5 13.4159 7.62179 13.2146 7.82308L6.21462 14.9231C5.91874 15.1217 5.75 15.4543 5.75 15.8C5.75 16.1457 5.91874 16.4783 6.21462 16.6769L13.2146 23.7769C13.4159 23.9782 13.7 24.1 14 24.1C14.5523 24.1 15 23.6523 15 23.1V8.5Z" fill="currentColor"/>
-                      </svg>
-                    </button>
-                    <button
-                      onClick={togglePlay}
-                      className="text-gray-300 hover:text-white transition-all duration-300 transform active:scale-[0.95] relative p-2 rounded-full group"
-                    >
-                      <div className="absolute inset-0 bg-gray-500/0 group-active:bg-gray-500/25 rounded-full transition-all duration-300 ease-out"></div>
-                      {isPlaying ? (
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform transition-transform duration-300 ease-out relative z-10">
-                          <rect x="7" y="6" width="6" height="20" rx="2" fill="currentColor"/>
-                          <rect x="19" y="6" width="6" height="20" rx="2" fill="currentColor"/>
-                        </svg>
-                      ) : (
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform transition-transform duration-300 ease-out relative z-10">
-                          <path d="M9 6.5C8.44772 6.5 8 6.94772 8 7.5V24.5C8 25.0523 8.44772 25.5 9 25.5C9.3 25.5 9.58414 25.3782 9.78538 25.1769L23.7854 16.6769C24.0813 16.4783 24.25 16.1457 24.25 15.8C24.25 15.4543 24.0813 15.1217 23.7854 14.9231L9.78538 6.42308C9.58414 6.22179 9.3 6.1 9 6.5Z" fill="currentColor"/>
-                        </svg>
-                      )}
-                    </button>
-                    <button 
-                      onClick={playNextTrack}
-                      className="text-gray-300 hover:text-white transition-all duration-300 transform active:scale-[0.95] relative p-2 rounded-full group"
-                    >
-                      <div className="absolute inset-0 bg-gray-500/0 group-active:bg-gray-500/25 rounded-full transition-all duration-300 ease-out"></div>
-                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform transition-transform duration-300 ease-out relative z-10">
-                        <path d="M8 8.5C8 7.94772 8.44772 7.5 9 7.5C9.3 7.5 9.58414 7.62179 9.78538 7.82308L16.7854 14.9231C17.0813 15.1217 17.25 15.4543 17.25 15.8C17.25 16.1457 17.0813 16.4783 16.7854 16.6769L9.78538 23.7769C9.58414 23.9782 9.3 24.1 9 24.1C8.44772 24.1 8 23.6523 8 23.1V8.5Z" fill="currentColor"/>
-                        <path d="M17 8.5C17 7.94772 17.4477 7.5 18 7.5C18.3 7.5 18.5841 7.62179 18.7854 7.82308L25.7854 14.9231C26.0813 15.1217 26.25 15.4543 26.25 15.8C26.25 16.1457 26.0813 16.4783 25.7854 16.6769L18.7854 23.7769C18.5841 23.9782 18.3 24.1 18 24.1C17.4477 24.1 17 23.6523 17 23.1V8.5Z" fill="currentColor"/>
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="flex items-center space-x-1 sm:space-x-2 mt-1 sm:mt-2">
-                    <span className="text-gray-400 text-xs">{formatTime(currentTime)}</span>
-                    <span className="text-gray-400 text-xs">/</span>
-                    <span className="text-gray-400 text-xs">{formatTime(duration)}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-end">
-                  <div className="flex items-center space-x-1 sm:space-x-2">
-                    <button
-                      onClick={toggleMute}
-                      className="text-gray-400 hover:text-white transition-colors"
-                    >
-                      {isMuted ? <FaVolumeMute size={18} className="sm:w-5 sm:h-5" /> : <FaVolumeUp size={18} className="sm:w-5 sm:h-5" />}
-                    </button>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={volume}
-                      onChange={handleInputVolumeChange}
-                      className="w-16 sm:w-24 accent-green-500"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
+              {/* Player Controls - centered */}
+              <div className="flex items-center justify-center space-x-8">
+                <motion.button 
+                  onClick={handlePrevClick} 
+                  className="text-white/80 hover:text-white transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FaStepBackward size={20} />
+                </motion.button>
+                <motion.button
+                  onClick={togglePlay}
+                  className="text-white w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
+                  whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isPlaying ? <FaPause size={24} /> : <FaPlay size={24} className="ml-1" />}
+                </motion.button>
+                <motion.button 
+                  onClick={handleNextClick} 
+                  className="text-white/80 hover:text-white transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FaStepForward size={20} />
+                </motion.button>
+              </div>
+              
+              {/* Right side controls */}
+              <div className="flex items-center space-x-2">
+                <motion.button 
+                  className="text-white/60 p-2"
+                  whileHover={{ scale: 1.1, color: "#ffffff" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <MdOutlineLyrics size={18} />
+                </motion.button>
+                <motion.button 
+                  className="text-white/60 p-2"
+                  whileHover={{ scale: 1.1, color: "#ffffff" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <IoVolumeMedium size={18} />
+                </motion.button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      )}
     </>
   );
 }
