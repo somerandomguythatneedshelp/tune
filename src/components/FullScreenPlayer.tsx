@@ -254,7 +254,7 @@ export default function FullScreenPlayer({
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.4 }}
             >
-              {track.title}
+              {track.title.slice(3)}
             </motion.h2>
             <motion.p 
               className="text-white/70 text-sm truncate"

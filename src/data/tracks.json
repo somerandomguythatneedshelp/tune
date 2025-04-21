@@ -705,24 +705,6 @@
     "lyricsUrl": "/music/Clavish/Chapter 16/10 Vartry Road.lrc"
   },
   {
-    "id": "compilations-huncho-jack,-jack-huncho-04-motorcycle-patches",
-    "title": "04 Motorcycle Patches",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102508/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/04_Motorcycle_Patches.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/04 Motorcycle Patches.lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-01-modern-slavery",
-    "title": "01 Modern Slavery",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102502/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/01_Modern_Slavery.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/01 Modern Slavery.lrc"
-  },
-  {
     "id": "clavish-greece---single-01-greece",
     "title": "01 Greece",
     "artist": "Clavish",
@@ -730,15 +712,6 @@
     "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102497/Clavish/Greece%20-%20Single/01_Greece.m4a",
     "coverArt": "https://tune-mu.vercel.app/music/Clavish/Greece%20-%20Single/Cover.jpg",
     "lyricsUrl": "/music/Clavish/Greece - Single/01 Greece.lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-02-black-&-chinese",
-    "title": "02 Black & Chinese",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102504/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/02_Black_Chinese.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/02 Black & Chinese.lrc"
   },
   {
     "id": "clavish-chapter-16-15-better-person",
@@ -768,15 +741,6 @@
     "lyricsUrl": "/music/Clavish/Chapter 16/14 Loose Lips Sink Ships.lrc"
   },
   {
-    "id": "compilations-huncho-jack,-jack-huncho-03-eye-2-eye-(feat.-takeoff)",
-    "title": "03 Eye 2 Eye (Feat. Takeoff)",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102506/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/03_Eye_2_Eye_feat._Takeoff.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/03 Eye 2 Eye (feat. Takeoff).lrc"
-  },
-  {
     "id": "clavish-chapter-16-16-when-it-rains,-it-pours",
     "title": "16 When It Rains, It Pours",
     "artist": "Clavish",
@@ -793,455 +757,6 @@
     "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102494/Clavish/Daily%20Duppy%20%28feat.%20GRM%20Daily%29%20-%20Single/01_Daily_Duppy_feat._GRM_Daily.m4a",
     "coverArt": "https://tune-mu.vercel.app/music/Clavish/Daily%20Duppy%20%28feat.%20GRM%20Daily%29%20-%20Single/Cover.jpg",
     "lyricsUrl": "/music/Clavish/Daily Duppy (feat. GRM Daily) - Single/01 Daily Duppy (feat. GRM Daily).lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-10-moon-rock",
-    "title": "10 Moon Rock",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102521/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/10_Moon_Rock.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/10 Moon Rock.lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-07-go",
-    "title": "07 Go",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102514/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/07_Go.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/07 Go.lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-09-saint-laurent-mask",
-    "title": "09 Saint Laurent Mask",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102519/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/09_Saint_Laurent_Mask.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/09 Saint Laurent Mask.lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-12-where-u-from",
-    "title": "12 Where U From",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102525/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/12_Where_U_From.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/12 Where U From.lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-05-huncho-jack",
-    "title": "05 Huncho Jack",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102510/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/05_Huncho_Jack.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/05 Huncho Jack.lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-11-how-u-feel",
-    "title": "11 How U Feel",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102523/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/11_How_U_Feel.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/11 How U Feel.lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-06-saint",
-    "title": "06 Saint",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102512/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/06_Saint.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/06 Saint.lrc"
-  },
-  {
-    "id": "compilations-jackboys-01-highest-in-the-room-(remix)-[feat.-rosalía-&-lil-baby]",
-    "title": "01 HIGHEST IN THE ROOM (REMIX) [Feat. ROSALÍA & Lil Baby]",
-    "artist": "Compilations",
-    "album": "JACKBOYS",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745104367/Compilations/JACKBOYS/yunthn9trgbp61v0rbmt.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/JACKBOYS/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/JACKBOYS/01 HIGHEST IN THE ROOM (REMIX) [feat. ROSALÍA & Lil Baby].lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-08-dubai-shit-(feat.-offset)",
-    "title": "08 Dubai Shit (Feat. Offset)",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102517/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/08_Dubai_Shit_feat._Offset.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/08 Dubai Shit (feat. Offset).lrc"
-  },
-  {
-    "id": "compilations-huncho-jack,-jack-huncho-13-best-man",
-    "title": "13 Best Man",
-    "artist": "Compilations",
-    "album": "Huncho Jack, Jack Huncho",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102528/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/13_Best_Man.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/Huncho%20Jack%2C%20Jack%20Huncho/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/Huncho Jack, Jack Huncho/13 Best Man.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-04-blinding-lights",
-    "title": "04 Blinding Lights",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102555/Compilations/The%20Highlights%20%28Deluxe%29/04_Blinding_Lights.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/04 Blinding Lights.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-03-save-your-tears",
-    "title": "03 Save Your Tears",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102552/Compilations/The%20Highlights%20%28Deluxe%29/03_Save_Your_Tears.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/03 Save Your Tears.lrc"
-  },
-  {
-    "id": "compilations-jackboys-02-jackboys",
-    "title": "02 JACKBOYS",
-    "artist": "Compilations",
-    "album": "JACKBOYS",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102532/Compilations/JACKBOYS/02_JACKBOYS.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/JACKBOYS/Cover.jpg"
-  },
-  {
-    "id": "compilations-jackboys-05-out-west-(feat.-young-thug)",
-    "title": "05 OUT WEST (Feat. Young Thug)",
-    "artist": "Compilations",
-    "album": "JACKBOYS",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102539/Compilations/JACKBOYS/05_OUT_WEST_feat._Young_Thug.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/JACKBOYS/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/JACKBOYS/05 OUT WEST (feat. Young Thug).lrc"
-  },
-  {
-    "id": "compilations-jackboys-04-had-enough-(feat.-quavo-&-offset)",
-    "title": "04 HAD ENOUGH (Feat. Quavo & Offset)",
-    "artist": "Compilations",
-    "album": "JACKBOYS",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102537/Compilations/JACKBOYS/04_HAD_ENOUGH_feat._Quavo_Offset.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/JACKBOYS/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/JACKBOYS/04 HAD ENOUGH (feat. Quavo & Offset).lrc"
-  },
-  {
-    "id": "compilations-jackboys-07-gatti",
-    "title": "07 GATTI",
-    "artist": "Compilations",
-    "album": "JACKBOYS",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102544/Compilations/JACKBOYS/07_GATTI.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/JACKBOYS/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/JACKBOYS/07 GATTI.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-01-die-for-you",
-    "title": "01 Die For You",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102548/Compilations/The%20Highlights%20%28Deluxe%29/01_Die_For_You.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/01 Die For You.lrc"
-  },
-  {
-    "id": "compilations-jackboys-06-what-to-do_-(feat.-don-toliver)",
-    "title": "06 WHAT TO DO  (Feat. Don Toliver)",
-    "artist": "Compilations",
-    "album": "JACKBOYS",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102541/Compilations/JACKBOYS/06_WHAT_TO_DO__feat._Don_Toliver.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/JACKBOYS/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/JACKBOYS/06 WHAT TO DO_ (feat. Don Toliver).lrc"
-  },
-  {
-    "id": "compilations-jackboys-03-gang-gang",
-    "title": "03 GANG GANG",
-    "artist": "Compilations",
-    "album": "JACKBOYS",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102534/Compilations/JACKBOYS/03_GANG_GANG.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/JACKBOYS/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/JACKBOYS/03 GANG GANG.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-02-starboy-(feat.-daft-punk)",
-    "title": "02 Starboy (Feat. Daft Punk)",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102550/Compilations/The%20Highlights%20%28Deluxe%29/02_Starboy_feat._Daft_Punk.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/02 Starboy (feat. Daft Punk).lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-13-call-out-my-name",
-    "title": "13 Call Out My Name",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103120/Compilations/The%20Highlights%20%28Deluxe%29/13_Call_Out_My_Name.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/13 Call Out My Name.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-14-often",
-    "title": "14 Often",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103121/Compilations/The%20Highlights%20%28Deluxe%29/14_Often.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/14 Often.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-12-the-morning",
-    "title": "12 The Morning",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102573/Compilations/The%20Highlights%20%28Deluxe%29/12_The_Morning.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/12 The Morning.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-07-can't-feel-my-face",
-    "title": "07 Can'T Feel My Face",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102562/Compilations/The%20Highlights%20%28Deluxe%29/07_Can_t_Feel_My_Face.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/07 Can't Feel My Face.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-10-heartless",
-    "title": "10 Heartless",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102568/Compilations/The%20Highlights%20%28Deluxe%29/10_Heartless.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/10 Heartless.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-05-in-your-eyes",
-    "title": "05 In Your Eyes",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102557/Compilations/The%20Highlights%20%28Deluxe%29/05_In_Your_Eyes.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/05 In Your Eyes.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-11-the-hills",
-    "title": "11 The Hills",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102571/Compilations/The%20Highlights%20%28Deluxe%29/11_The_Hills.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/11 The Hills.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-09-pray-for-me",
-    "title": "09 Pray For Me",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102566/Compilations/The%20Highlights%20%28Deluxe%29/09_Pray_For_Me.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/09 Pray For Me.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-06-wicked-games",
-    "title": "06 Wicked Games",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102560/Compilations/The%20Highlights%20%28Deluxe%29/06_Wicked_Games.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/06 Wicked Games.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-08-i-feel-it-coming-(feat.-daft-punk)",
-    "title": "08 I Feel It Coming (Feat. Daft Punk)",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745102564/Compilations/The%20Highlights%20%28Deluxe%29/08_I_Feel_It_Coming_feat._Daft_Punk.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/08 I Feel It Coming (feat. Daft Punk).lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-23-less-than-zero",
-    "title": "23 Less Than Zero",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103137/Compilations/The%20Highlights%20%28Deluxe%29/23_Less_Than_Zero.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/23 Less Than Zero.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-24-is-there-someone-else_",
-    "title": "24 Is There Someone Else",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103137/Compilations/The%20Highlights%20%28Deluxe%29/24_Is_There_Someone_Else_.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/24 Is There Someone Else_.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-22-house-of-balloons-_-glass-table-girls",
-    "title": "22 House Of Balloons   Glass Table Girls",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103138/Compilations/The%20Highlights%20%28Deluxe%29/22_House_Of_Balloons___Glass_Table_Girls.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/22 House Of Balloons _ Glass Table Girls.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-19-one-of-the-girls",
-    "title": "19 One Of The Girls",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103129/Compilations/The%20Highlights%20%28Deluxe%29/19_One_Of_The_Girls.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/19 One Of The Girls.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-15-love-me-harder",
-    "title": "15 Love Me Harder",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103125/Compilations/The%20Highlights%20%28Deluxe%29/15_Love_Me_Harder.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/15 Love Me Harder.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-21-i-was-never-there",
-    "title": "21 I Was Never There",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103131/Compilations/The%20Highlights%20%28Deluxe%29/21_I_Was_Never_There.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/21 I Was Never There.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-20-popular-(feat.-playboi-carti)",
-    "title": "20 Popular (Feat. Playboi Carti)",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103133/Compilations/The%20Highlights%20%28Deluxe%29/20_Popular_feat._Playboi_Carti.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/20 Popular (feat. Playboi Carti).lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-16-earned-it-(fifty-shades-of-grey)",
-    "title": "16 Earned It (Fifty Shades Of Grey)",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103124/Compilations/The%20Highlights%20%28Deluxe%29/16_Earned_It_Fifty_Shades_Of_Grey.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/16 Earned It (Fifty Shades Of Grey).lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-17-acquainted",
-    "title": "17 Acquainted",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103129/Compilations/The%20Highlights%20%28Deluxe%29/17_Acquainted.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/17 Acquainted.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-18-after-hours",
-    "title": "18 After Hours",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103128/Compilations/The%20Highlights%20%28Deluxe%29/18_After_Hours.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/18 After Hours.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-33-moth-to-a-flame",
-    "title": "33 Moth To A Flame",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103157/Compilations/The%20Highlights%20%28Deluxe%29/33_Moth_To_A_Flame.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/33 Moth To A Flame.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-26-stargirl-interlude-(feat.-lana-del-rey)",
-    "title": "26 Stargirl Interlude (Feat. Lana Del Rey)",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103144/Compilations/The%20Highlights%20%28Deluxe%29/26_Stargirl_Interlude_feat._Lana_Del_Rey.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/26 Stargirl Interlude (feat. Lana Del Rey).lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-32-take-my-breath",
-    "title": "32 Take My Breath",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103157/Compilations/The%20Highlights%20%28Deluxe%29/32_Take_My_Breath.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/32 Take My Breath.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-25-party-monster",
-    "title": "25 Party Monster",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103145/Compilations/The%20Highlights%20%28Deluxe%29/25_Party_Monster.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/25 Party Monster.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-28-sacrifice",
-    "title": "28 Sacrifice",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103147/Compilations/The%20Highlights%20%28Deluxe%29/28_Sacrifice.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/28 Sacrifice.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-30-in-the-night",
-    "title": "30 In The Night",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103153/Compilations/The%20Highlights%20%28Deluxe%29/30_In_The_Night.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/30 In The Night.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-29-reminder",
-    "title": "29 Reminder",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103148/Compilations/The%20Highlights%20%28Deluxe%29/29_Reminder.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/29 Reminder.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-34-out-of-time",
-    "title": "34 Out Of Time",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103154/Compilations/The%20Highlights%20%28Deluxe%29/34_Out_of_Time.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/34 Out of Time.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-31-wasted-times",
-    "title": "31 Wasted Times",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103151/Compilations/The%20Highlights%20%28Deluxe%29/31_Wasted_Times.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/31 Wasted Times.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-27-tell-your-friends",
-    "title": "27 Tell Your Friends",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103149/Compilations/The%20Highlights%20%28Deluxe%29/27_Tell_Your_Friends.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/27 Tell Your Friends.lrc"
   },
   {
     "id": "d-block-europe-dbe-world-07-4-and-a-baby",
@@ -1307,15 +822,6 @@
     "lyricsUrl": "/music/D-Block Europe/DBE World/05 No More This Time.lrc"
   },
   {
-    "id": "compilations-the-highlights-(deluxe)-36-high-for-this",
-    "title": "36 High For This",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103160/Compilations/The%20Highlights%20%28Deluxe%29/36_High_For_This.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/36 High For This.lrc"
-  },
-  {
     "id": "d-block-europe-dbe-world-04-kettle-blue",
     "title": "04 Kettle Blue",
     "artist": "D Block Europe",
@@ -1323,15 +829,6 @@
     "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103168/D-Block%20Europe/DBE%20World/04_Kettle_Blue.m4a",
     "coverArt": "https://tune-mu.vercel.app/music/D-Block%20Europe/DBE%20World/Cover.jpg",
     "lyricsUrl": "/music/D-Block Europe/DBE World/04 Kettle Blue.lrc"
-  },
-  {
-    "id": "compilations-the-highlights-(deluxe)-35-king-of-the-fall",
-    "title": "35 King Of The Fall",
-    "artist": "Compilations",
-    "album": "The Highlights (Deluxe)",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103163/Compilations/The%20Highlights%20%28Deluxe%29/35_King_Of_The_Fall.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Compilations/The%20Highlights%20%28Deluxe%29/Cover.jpg",
-    "lyricsUrl": "/music/Compilations/The Highlights (Deluxe)/35 King Of The Fall.lrc"
   },
   {
     "id": "d-block-europe-dbe-world-17-domino's-in-order-(interlude)",
@@ -2936,15 +2433,6 @@
     "lyricsUrl": "/music/King Von/Took Her to the O - Single/01 Took Her to the O.lrc"
   },
   {
-    "id": "ice-spice-did-it-first---single-01-did-it-first",
-    "title": "01 Did It First",
-    "artist": "Ice Spice",
-    "album": "Did It First   Single",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103489/Ice%20Spice/Did%20It%20First%20-%20Single/01_Did_It_First.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Ice%20Spice/Did%20It%20First%20-%20Single/Cover.jpg",
-    "lyricsUrl": "/music/Ice Spice/Did It First - Single/01 Did It First.lrc"
-  },
-  {
     "id": "kairo-keyz-back2back-(feat.-central-cee)---single-01-back2back-(feat.-central-cee)",
     "title": "01 Back2back (Feat. Central Cee)",
     "artist": "Kairo Keyz",
@@ -2961,14 +2449,6 @@
     "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103495/Kidwild/Redemption%20%28feat.%20Nemzzz%29%20-%20Single/01_Redemption_feat._Nemzzz.m4a",
     "coverArt": "https://tune-mu.vercel.app/music/Kidwild/Redemption%20%28feat.%20Nemzzz%29%20-%20Single/Cover.jpg",
     "lyricsUrl": "/music/Kidwild/Redemption (feat. Nemzzz) - Single/01 Redemption (feat. Nemzzz).lrc"
-  },
-  {
-    "id": "icesyren-flow-like-pozer-(feat.-pozer)---single-01-flow-like-pozer-(feat.-pozer)",
-    "title": "01 Flow Like Pozer (Feat. Pozer)",
-    "artist": "Icesyren",
-    "album": "Flow Like Pozer (Feat. Pozer)   Single",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103493/Icesyren/flow%20like%20pozer%20%28feat.%20Pozer%29%20-%20Single/01_flow_like_pozer_feat._Pozer.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Icesyren/flow%20like%20pozer%20%28feat.%20Pozer%29%20-%20Single/Cover.jpg"
   },
   {
     "id": "king-von-crazy-story---single-01-crazy-story",
@@ -3149,14 +2629,6 @@
     "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103519/King%20Von/Welcome%20to%20O%27Block/16_Wayne_s_Story.m4a",
     "coverArt": "https://tune-mu.vercel.app/music/King%20Von/Welcome%20to%20O%27Block/Cover.jpg",
     "lyricsUrl": "/music/King Von/Welcome to O'Block/16 Wayne's Story.lrc"
-  },
-  {
-    "id": "lusho-cross-waters-(feat.-pozer)---single-01-cross-waters-(feat.-pozer)",
-    "title": "01 Cross Waters (Feat. Pozer)",
-    "artist": "Lusho",
-    "album": "Cross Waters (Feat. Pozer)   Single",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103519/Lusho/Cross%20Waters%20%28feat.%20Pozer%29%20-%20Single/01_Cross_Waters_feat._Pozer.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/Lusho/Cross%20Waters%20%28feat.%20Pozer%29%20-%20Single/Cover.jpg"
   },
   {
     "id": "king-von-welcome-to-o'block-12-ain't-see-it-coming-(feat.-moneybagg-yo)",
@@ -5411,14 +4883,5 @@
     "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103923/Travis%20Scott/UTOPIA/18_TELEKINESIS_feat._SZA_Future.m4a",
     "coverArt": "https://tune-mu.vercel.app/music/Travis%20Scott/UTOPIA/Cover.jpg",
     "lyricsUrl": "/music/Travis Scott/UTOPIA/18 TELEKINESIS (feat. SZA & Future).lrc"
-  },
-  {
-    "id": "¥$-carnival-(feat.-rich-the-kid,-playboi-carti)---single-01-carnival-(feat.-rich-the-kid,-playboi-carti)",
-    "title": "01 CARNIVAL (Feat. Rich The Kid, Playboi Carti)",
-    "artist": "¥$",
-    "album": "CARNIVAL (Feat. Rich The Kid, Playboi Carti)   Single",
-    "audioUrl": "https://res.cloudinary.com/dc6tpo8l8/video/upload/v1745103945/%C2%A5%24/CARNIVAL%20%28feat.%20Rich%20The%20Kid%2C%20Playboi%20Carti%29%20-%20Single/01_CARNIVAL_feat._Rich_The_Kid_Playboi_Carti.m4a",
-    "coverArt": "https://tune-mu.vercel.app/music/%C2%A5%24/CARNIVAL%20%28feat.%20Rich%20The%20Kid%2C%20Playboi%20Carti%29%20-%20Single/Cover.jpg",
-    "lyricsUrl": "/music/¥$/CARNIVAL (feat. Rich The Kid, Playboi Carti) - Single/01 CARNIVAL (feat. Rich The Kid, Playboi Carti).lrc"
   }
 ]

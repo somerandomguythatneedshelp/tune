@@ -399,7 +399,7 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
           <div className="flex justify-between items-center mb-4">
             <div>
               <h2 className="text-white font-medium text-lg">Lyrics</h2>
-              <p className="text-gray-400 text-sm mt-1">{currentTrack.title} - {currentTrack.artist}</p>
+              <p className="text-gray-400 text-sm mt-1">{currentTrack.title.slice(3)} - {currentTrack.artist}</p>
             </div>
             <button 
               onClick={() => setShowLyrics(false)}
@@ -461,7 +461,7 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
                     <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
                         src={currentTrack.coverArt}
-                        alt={currentTrack.title}
+                        alt={currentTrack.title.slice(3)}
                         width={64}
                         height={64}
                         className="w-full h-full object-cover"
@@ -470,7 +470,7 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
                     </div>
                     <div className="min-w-0 max-w-[180px] sm:max-w-[200px]">
                       <MarqueeText 
-                        text={currentTrack.title} 
+                        text={currentTrack.title.slice(3)} 
                         className="text-white font-medium text-base sm:text-lg"
                       />
                     </div>
