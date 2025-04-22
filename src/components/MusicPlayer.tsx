@@ -15,6 +15,8 @@ interface MusicPlayerProps {
   tracks: Track[];
   currentTrackIndex: number;
   onTrackChange: (index: number) => void;
+  isPlaying: boolean;
+  onPlaybackChange: (isPlaying: boolean) => void;
 }
 
 // Marquee text component for long titles
@@ -67,7 +69,7 @@ const MarqueeText = ({ text, className }: { text: string; className?: string }) 
   );
 };
 
-export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }: MusicPlayerProps) {
+export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange, isPlaying: parentIsPlaying, onPlaybackChange }: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -290,6 +292,17 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange }
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
   }, [isIOS]);
+
+  // Add effect to sync with parent's isPlaying state
+  useEffect(() => {
+    if (parentIsPlaying !== undefined && soundRef.current) {
+      if (parentIsPlaying && !soundRef.current.playing()) {
+        soundRef.current.play();
+      } else if (!parentIsPlaying && soundRef.current.playing()) {
+        soundRef.current.pause();
+      }
+    }
+  }, [parentIsPlaying]);
 
   const togglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
