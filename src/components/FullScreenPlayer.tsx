@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Track, LyricLine } from '@/utils/audioUtils';
 import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaStar, FaEllipsisH, FaMusic, FaList } from 'react-icons/fa';
 import { IoVolumeMedium } from 'react-icons/io5';
 import { MdOutlineLyrics } from 'react-icons/md';
 import { FastAverageColor } from 'fast-average-color';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion'; // Import useAnimation
 
 interface FullScreenPlayerProps {
   track: Track & { explicit?: boolean };
@@ -41,8 +41,17 @@ export default function FullScreenPlayer({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
+  // Removed isUserScrolling and scrollTimeoutRef as we are controlling scroll programmatically
+  // const [isUserScrolling, setIsUserScrolling] = useState(false);
+  // const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const currentLyricRef = useRef<HTMLDivElement>(null);
+  const lyricsScrollAreaRef = useRef<HTMLDivElement>(null); // Ref for the container holding all lyrics
+  const currentLyricRef = useRef<HTMLDivElement>(null); // Ref for the currently active lyric's container
+  const albumArtContainerRef = useRef<HTMLDivElement>(null); // Ref for album art container
+
+  // Framer Motion animation controls for the lyrics container
+  const lyricsControls = useAnimation();
 
   useEffect(() => {
     // Trigger entrance animation after mount
@@ -52,57 +61,113 @@ export default function FullScreenPlayer({
 
     // Prevent background scrolling
     document.body.style.overflow = 'hidden';
-    
+
     // Re-enable scrolling when component unmounts
     return () => {
       document.body.style.overflow = '';
+      // Clear any pending scroll timeout on unmount
+      // if (scrollTimeoutRef.current) {
+      //   clearTimeout(scrollTimeoutRef.current);
+      // }
     };
   }, []);
 
+  // Effect to extract color using FastAverageColor
   useEffect(() => {
     const loadImage = async () => {
-      try {
-        const img = document.createElement('img');
-        img.crossOrigin = 'Anonymous';
-        
-        img.onload = async () => {
-          try {
-            const fac = new FastAverageColor();
-            const color = await fac.getColor(img);
-            
-            if (color.error) {
-              throw new Error('Could not extract color');
-            }
-            
-            const { value } = color;
-            const colors = [
-              `rgba(${value[0]}, ${value[1]}, ${value[2]}, 0.8)`,
-              `rgba(${value[0]}, ${value[1]}, ${value[2]}, 0.95)`
-            ];
-            
-            setGradientColors(colors);
-          } catch (error) {
-            console.error('Error in color extraction:', error);
-            setGradientColors(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
-          }
-        };
-
-        img.onerror = () => {
-          console.error('Error loading image');
-          setGradientColors(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
-        };
-
-        img.src = track.coverArt;
-      } catch (error) {
-        console.error('Error in loadImage:', error);
+      // Ensure track.coverArt exists before attempting to load
+      if (!track.coverArt) {
+        console.warn('track.coverArt is not available for color extraction.');
         setGradientColors(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
+        return;
       }
+
+      const img = new window.Image(); // Use window.Image for broader compatibility
+      img.crossOrigin = 'Anonymous'; // Needed for cross-origin images
+
+      img.onload = () => {
+        try {
+          const fac = new FastAverageColor();
+          const color = fac.getColor(img); // Use getColor directly
+
+          if (color.error) {
+            throw new Error('Could not extract color');
+          }
+
+          const { value } = color;
+          const colors = [
+            `rgba(${value[0]}, ${value[1]}, ${value[2]}, 0.8)`,
+            `rgba(${value[0]}, ${value[1]}, ${value[2]}, 0.95)`
+          ];
+
+          setGradientColors(colors);
+        } catch (error) {
+          console.error('Error in color extraction:', error);
+          // Fallback to default colors on error
+          setGradientColors(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
+        }
+      };
+
+      img.onerror = () => {
+        console.error('Error loading image for FastAverageColor color extraction.');
+        // Fallback to default colors on image load error for color extraction
+        setGradientColors(['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']);
+      };
+
+      // Set the image source
+      img.src = track.coverArt;
     };
 
     loadImage();
-  }, [track.coverArt]);
+  }, [track.coverArt]); // Re-run effect when coverArt changes
+
+  // Effect to animate the lyrics position when the current lyric changes
+  useEffect(() => {
+    if (lyricsScrollAreaRef.current && currentLyricRef.current) {
+      const lyricsContainer = lyricsScrollAreaRef.current;
+      const currentLyric = currentLyricRef.current;
+
+      // Calculate the vertical position needed to center the current lyric
+      const containerHeight = lyricsContainer.offsetHeight;
+      const currentLyricTop = currentLyric.offsetTop;
+      const currentLyricHeight = currentLyric.offsetHeight;
+
+      // Target scroll position to center the current lyric
+      const targetScrollTop = currentLyricTop - (containerHeight / 2) + (currentLyricHeight / 2);
+
+      // Animate the translateY of the lyrics container's content
+      // The translateY value should be negative to move the content up.
+      const targetTranslateY = -targetScrollTop;
+
+      // Animate the translateY of the lyrics container's content
+      lyricsControls.start({
+        y: targetTranslateY,
+        transition: {
+          type: "spring",
+          stiffness: 100, // Adjust stiffness for animation speed
+          damping: 20,   // Adjust damping for bounce effect
+        },
+      });
+    }
+  }, [currentLyricIndex, lyricsControls]); // Re-run when currentLyricIndex or controls change
+
+  // Removed handleScroll as we are controlling scroll programmatically
+  // const handleScroll = useCallback(() => {
+  //   if (scrollTimeoutRef.current) {
+  //     clearTimeout(scrollTimeoutRef.current);
+  //   }
+  //   setIsUserScrolling(true);
+  //   scrollTimeoutRef.current = setTimeout(() => {
+  //     setIsUserScrolling(false);
+  //   }, 500);
+  // }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    // Check if the touch started within the lyrics scroll area
+    if (lyricsScrollAreaRef.current && lyricsScrollAreaRef.current.contains(e.target as Node)) {
+        // If inside the lyrics area, don't start dragging the main container
+        return;
+    }
     setIsDragging(true);
     setDragStartY(e.touches[0].clientY);
   };
@@ -119,7 +184,7 @@ export default function FullScreenPlayer({
   const handleTouchEnd = () => {
     if (!isDragging) return;
     setIsDragging(false);
-    
+
     if (dragOffset > window.innerHeight * 0.3) {
       // Close if dragged down more than 30% of screen height
       setIsVisible(false);
@@ -136,64 +201,24 @@ export default function FullScreenPlayer({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  // Calculate dynamic spacing based on lyric line count and length
-  const calculateLyricSpacing = (text: string): number => {
-    // Count the number of lines by counting newlines
-    const lines = text.split('\n');
-    const lineCount = lines.length;
-    
-    // Check for long lines that might wrap
-    const hasLongLines = lines.some(line => line.length > 35);
-    
-    // Base spacing is 120px
-    const baseSpacing = 120;
-    
-    // Adjust spacing: 
-    // - For single-line lyrics: keep base spacing
-    // - For multi-line lyrics: add extra space (25px per additional line)
-    // - For lines that might wrap, add extra space
-    let extraSpacing = (lineCount - 1) * 25; // 25px per additional line
-    
-    // Add extra for potentially wrapping long lines
-    if (hasLongLines) {
-      extraSpacing += 20;
-    }
-    
-    // Cap at a reasonable maximum
-    return baseSpacing + Math.min(extraSpacing, 100);
-  };
-  
-  // Get current lyric height
-  const getCurrentLyricHeight = (text: string): number => {
-    const lines = text.split('\n');
-    const lineCount = lines.length;
-    
-    // Check if any line is long and might wrap
-    const longLineCount = lines.filter(line => line.length > 35).length;
-    
-    // Base height for single line is 80px
-    // Add 35px per normal line and 60px per long line (might wrap)
-    return Math.max(80, (lineCount - longLineCount) * 35 + longLineCount * 60);
-  };
+   // Get lyric height (simplified for list rendering) - Kept this as it's a utility
+   const getLyricHeight = (text: string): number => {
+     const lines = text.split('\n');
+     const longLineCount = lines.filter(line => line.length > 35).length;
+     const normalLineCount = lines.length - longLineCount;
+     // Estimate height: base height + height per line (more for wrapping lines)
+     return 30 + normalLineCount * 20 + longLineCount * 40; // Adjusted base/line heights for typical list view
+   };
 
-  // Get current lyric text
-  const currentLyricText = currentLyricIndex >= 0 && lyrics.length > 0 
-    ? lyrics[currentLyricIndex].text 
-    : "♪ ♪ ♪";
-
-  // Calculate spacing for the upcoming lyrics
-  const upcomingLyricsTopPosition = calculateLyricSpacing(currentLyricText);
-  
-  // Calculate height for the current lyric container
-  const currentLyricHeight = getCurrentLyricHeight(currentLyricText);
 
   return (
-    <motion.div 
+    <motion.div
       ref={containerRef}
-      className="fixed inset-0 z-50 flex flex-col touch-none overscroll-none"
+      // Added select-none class to make text non-selectable
+      className="fixed inset-0 z-50 flex flex-col touch-none overscroll-none select-none"
       initial={{ opacity: 0, y: "100%" }}
-      animate={{ 
-        opacity: 1, 
+      animate={{
+        opacity: 1,
         y: dragOffset > 0 ? `${dragOffset}px` : 0,
         transition: { duration: 0.4, ease: "easeOut" }
       }}
@@ -210,7 +235,7 @@ export default function FullScreenPlayer({
       {/* Top Bar */}
       <div className="flex justify-between items-center p-4 pt-8">
         <div className="w-8" /> {/* Spacer */}
-        <div 
+        <div
           className="h-1 w-8 bg-gray-600 rounded-full"
           style={{ opacity: isDragging ? 0.3 : 0.6 }}
         />
@@ -224,253 +249,174 @@ export default function FullScreenPlayer({
         </div>
       </div>
 
-      {/* Main Content - Apple Music Style Layout */}
-      <div className="flex-1 flex flex-col px-4 sm:px-8">
-        {/* Album Art and Info */}
-        <motion.div 
-          className="flex items-center mb-6 mt-2"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
+      {/* Main Content Area - Horizontal flex with album art and lyrics */}
+      {/* Use flex to align items and position them */}
+      {/* Added -mt-8 class to move content slightly up */}
+      <div className="flex-1 flex flex-row px-4 sm:px-8 justify-center items-center -mt-8"> {/* flex-row, justify-center, items-center for vertical centering, added negative top margin */}
+
+        {/* Album Art and Info - Positioned on the left */}
+        <motion.div
+          ref={albumArtContainerRef} // Attach ref
+          className="flex flex-col items-center mr-8 flex-shrink-0 w-64" // Layout for column, right margin, fixed width, prevent shrinking
+          initial={{ opacity: 0, x: -20 }} // Animate from the left
+          animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
-          <motion.div 
-            className="w-12 h-12 rounded overflow-hidden mr-4 flex-shrink-0"
+          {/* Increased size of the image container */}
+          <motion.div
+            className="w-64 h-64 rounded-lg overflow-hidden mb-4 shadow-lg" // Increased size and added shadow
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.2 }}
           >
             <Image
-              src={track.coverArt}
+              src={track.coverArt || 'https://placehold.co/256x256/000000/FFFFFF?text=No+Art'} // Fallback for Image, updated size
               alt={track.title}
-              width={48}
-              height={48}
+              width={256} // Updated width
+              height={256} // Updated height
               className="w-full h-full object-cover"
               priority
             />
           </motion.div>
-          <div className="flex-1 min-w-0">
-            <motion.h2 
-              className="text-white text-lg font-bold truncate"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.4 }}
-            >
-              {track.title.slice(3)}
-            </motion.h2>
-            <motion.p 
-              className="text-white/70 text-sm truncate"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-            >
-              {track.artist}
-            </motion.p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <motion.button 
-              className="text-white/60 p-2"
-              whileHover={{ scale: 1.1, color: "#ffffff" }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FaMusic size={18} />
-            </motion.button>
-            <motion.button 
-              className="text-white/60 p-2"
-              whileHover={{ scale: 1.1, color: "#ffffff" }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FaEllipsisH size={18} />
-            </motion.button>
-          </div>
+           {/* Track Info below the album art */}
+           <div className="text-center">
+             <motion.h2
+               className="text-white text-xl font-bold" // Adjusted text size
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ delay: 0.3, duration: 0.4 }}
+             >
+               {track.title.slice(3)}
+             </motion.h2>
+             <motion.p
+               className="text-white/70 text-base" // Adjusted text size
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ delay: 0.4, duration: 0.4 }}
+             >
+               {track.artist}
+             </motion.p>
+           </div>
         </motion.div>
 
-        {/* Lyrics Section with Continuous Motion */}
-        <div className="flex-1 flex flex-col pt-12 my-8">
-          {/* Lyrics Display Area with Absolute Positioning */}
-          <div className="relative w-full overflow-hidden" style={{ height: '70vh' }}>
-            {/* Current Lyric Container - Fixed Position */}
-            <div 
-              ref={currentLyricRef}
-              className="absolute top-0 left-0 right-0"
-              style={{ 
-                minHeight: `${currentLyricHeight}px`,
-                zIndex: 10,
-                perspective: '1000px',
-                paddingTop: '10px', // Add padding at the top to prevent cutoff
-                paddingBottom: '10px'
-              }}
-            >
-              <AnimatePresence mode="popLayout">
-                <motion.div
-                  key={`current-lyric-container-${currentLyricIndex}`}
-                  className="w-full flex items-center justify-center px-6"
-                >
-                  <motion.h1 
-                    key={`current-lyric-${currentLyricIndex}`}
-                    initial={{ y: 70, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -70, opacity: 0 }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 350, 
-                      damping: 25,
-                      mass: 0.7
-                    }}
-                    className="text-3xl font-bold text-center text-white break-words whitespace-pre-wrap w-full"
+        {/* Lyrics Section - Scrollable Container - Takes up remaining space */}
+        {/* This div is the main scrollable area for all lyrics */}
+        {/* Added overflow-hidden to hide default scrollbar */}
+        <div
+          ref={lyricsScrollAreaRef} // Attach ref for the container
+          className="flex-1 overflow-hidden text-left relative" // Changed to text-left, removed h-full, added overflow-hidden
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            maxWidth: '500px',
+            marginLeft: '0', // Ensure no extra left margin
+            marginRight: '0', // Ensure no extra right margin
+            height: '300px', // Set a fixed height for the visible area (adjust as needed)
+          }}
+          // Removed onScroll handler
+          // Stop touch events from bubbling up to the main container's drag handlers
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+        >
+          {/* This motion.div will contain all lyrics and be animated vertically */}
+          <motion.div
+            animate={lyricsControls} // Attach animation controls
+            className="w-full" // Ensure it takes full width
+          >
+            {lyrics.length > 0 ? (
+              lyrics.map((line, index) => {
+                // Determine if this is the current lyric - Moved to the top
+                const isCurrent = index === currentLyricIndex;
+
+                // Determine the appropriate text size class based on index
+                let textSizeClass = 'text-white/60 text-xl font-semibold'; // Default for inactive
+
+                if (isCurrent) { // Use isCurrent here
+                  textSizeClass = 'text-white text-3xl font-bold'; // Current lyric size
+                } else if (index < currentLyricIndex) {
+                  textSizeClass = 'text-white/60 text-2xl font-semibold'; // Previous lyric size (bigger than upcoming, less than current)
+                } else { // index > currentLyricIndex
+                   textSizeClass = 'text-white/60 text-xl font-semibold'; // Upcoming lyric size (slightly increased from previous inactive)
+                }
+
+
+                return (
+                  // This outer div contains each lyric line and its styling
+                  <div
+                    key={`lyric-${index}`}
+                    // Assign ref only to the current lyric's container for scrolling calculation
+                    ref={isCurrent ? currentLyricRef : null}
+                    // Removed AnimatePresence and motion.div for individual lyric fading
+                    className={`mb-6 transition-all duration-300 ease-in-out pr-6 ${textSizeClass}`} // Apply dynamic text size class
                     style={{
                       lineHeight: '1.3',
-                      maxWidth: '100%',
-                      overflowWrap: 'break-word',
-                      wordBreak: 'break-word',
-                      hyphens: 'auto'
+                      textShadow: isCurrent ? '0 0 8px rgba(255, 255, 255, 0.5)' : 'none', // Simple text shadow "glow"
                     }}
                   >
-                    {currentLyricText}
-                  </motion.h1>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Upcoming Lyrics Section */}
-            <div 
-              className="absolute left-0 right-0 px-6" 
-              style={{ 
-                top: `${upcomingLyricsTopPosition}px`
-              }}
-            >
-              {lyrics.length > 0 && currentLyricIndex < lyrics.length - 1 
-                ? lyrics.slice(currentLyricIndex + 1, currentLyricIndex + 4).map((line, index) => {
-                    // Calculate dynamic spacing between upcoming lyrics
-                    const prevLineText = index > 0 
-                      ? lyrics[currentLyricIndex + index].text 
-                      : currentLyricText;
-                    
-                    // Additional spacing based on previous lyric complexity
-                    const lineSpacing = index === 0 ? 0 : Math.min(prevLineText.split('\n').length * 15, 40);
-                    
-                    return (
-                      <motion.div 
-                        key={`upcoming-${currentLyricIndex}-${index}`}
-                        className="mb-10"
-                        style={{
-                          marginTop: index === 0 ? 0 : lineSpacing
-                        }}
-                        initial={{ y: 70, opacity: 0 }}
-                        animate={{ 
-                          y: 0, 
-                          opacity: Math.max(0.4, 1 - (index * 0.2))
-                        }}
-                        transition={{ 
-                          delay: index * 0.08,
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 30
-                        }}
-                      >
-                        <p 
-                          className="text-xl font-bold text-center text-white/60 break-words whitespace-pre-wrap w-full"
-                          style={{
-                            lineHeight: '1.3',
-                            maxWidth: '100%',
-                            overflowWrap: 'break-word',
-                            wordBreak: 'break-word',
-                            hyphens: 'auto'
-                          }}
-                        >
-                          {line.text}
-                        </p>
-                      </motion.div>
-                    );
-                  })
-                : null
-              }
-            </div>
-
-            {/* Previous lyric that's fading out and moving up */}
-            {currentLyricIndex > 0 && lyrics.length > 0 && (
-              <motion.div
-                key={`prev-lyric-${currentLyricIndex-1}`}
-                initial={{ y: 0, opacity: 0 }}
-                animate={{ y: -70, opacity: 0 }}
-                className="absolute top-0 left-0 right-0 flex items-center justify-center px-6"
-                style={{
-                  zIndex: 9,
-                  height: `${currentLyricHeight}px`
-                }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 350, 
-                  damping: 25,
-                  mass: 0.7
-                }}
-              >
-                <span 
-                  className="text-3xl font-bold text-center text-white break-words whitespace-pre-wrap w-full"
-                  style={{
-                    lineHeight: '1.3',
-                    maxWidth: '100%',
-                    overflowWrap: 'break-word',
-                    wordBreak: 'break-word',
-                    hyphens: 'auto'
-                  }}
-                >
-                  {lyrics[currentLyricIndex - 1].text}
-                </span>
-              </motion.div>
+                    {line.text}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-white/60 text-xl font-semibold text-left px-6"> {/* Adjusted text alignment and padding */}
+                No lyrics available for this track.
+              </div>
             )}
+          </motion.div> {/* End of motion.div for animating lyrics */}
+        </div> {/* End of lyrics scroll area container */}
+
+      </div>
+
+      {/* Controls - Bottom */}
+      <motion.div
+        className="fixed bottom-0 left-0 right-0 bg-black/10 backdrop-blur-sm pb-8 pt-4 px-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        {/* Progress Bar */}
+        <div className="max-w-xl mx-auto mb-4">
+          <div className="relative h-[3px] bg-white/20 rounded-full overflow-hidden">
+            <motion.div
+              className="absolute h-full bg-white rounded-full"
+              style={{ width: `${(currentTime / duration) * 100}%` }}
+              transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+            />
+          </div>
+          <div className="flex justify-between text-xs text-white/60 mt-2">
+            <span>{formatTime(currentTime)}</span>
+            <span>-{formatTime(duration - currentTime)}</span>
           </div>
         </div>
 
-        {/* Controls - Bottom */}
-        <motion.div 
-          className="fixed bottom-0 left-0 right-0 bg-black/10 backdrop-blur-sm pb-8 pt-4 px-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          {/* Progress Bar */}
-          <div className="max-w-xl mx-auto mb-4">
-            <div className="relative h-[3px] bg-white/20 rounded-full overflow-hidden">
-              <motion.div 
-                className="absolute h-full bg-white rounded-full"
-                style={{ width: `${(currentTime / duration) * 100}%` }}
-                transition={{ type: "tween", ease: "linear", duration: 0.1 }}
-              />
-            </div>
-            <div className="flex justify-between text-xs text-white/60 mt-2">
-              <span>{formatTime(currentTime)}</span>
-              <span>-{formatTime(duration - currentTime)}</span>
-            </div>
-          </div>
-
-          {/* Playback Controls */}
-          <div className="flex items-center justify-center space-x-12 max-w-md mx-auto">
-            <motion.button 
-              onClick={onPrevious}
-              className="text-white/80 hover:text-white transition-colors"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <FaStepBackward size={24} />
-            </motion.button>
-            <motion.button 
-              onClick={onPlayPause}
-              className="text-white w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
-              whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {isPlaying ? <FaPause size={32} /> : <FaPlay size={32} className="ml-1" />}
-            </motion.button>
-            <motion.button 
-              onClick={onNext}
-              className="text-white/80 hover:text-white transition-colors"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <FaStepForward size={24} />
-            </motion.button>
-          </div>
-        </motion.div>
-      </div>
+        {/* Playback Controls */}
+        <div className="flex items-center justify-center space-x-12 max-w-md mx-auto">
+          <motion.button
+            onClick={onPrevious}
+            className="text-white/80 hover:text-white transition-colors"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FaStepBackward size={24} />
+          </motion.button>
+          <motion.button
+            onClick={onPlayPause}
+            className="text-white w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
+            whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isPlaying ? <FaPause size={32} /> : <FaPlay size={32} className="ml-1" />}
+          </motion.button>
+          <motion.button
+            onClick={onNext}
+            className="text-white/80 hover:text-white transition-colors"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FaStepForward size={24} />
+          </motion.button>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }

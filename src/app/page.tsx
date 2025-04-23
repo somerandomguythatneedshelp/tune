@@ -765,9 +765,7 @@ export default function Home() {
                 <div>TITLE</div>
                 <div>ARTIST</div>
                 <div className="hidden md:block">ALBUM</div>
-                <div className="flex justify-end">
-                  <FaClock />
-                </div>
+                
               </div>
 
               {/* Table rows - conditionally show search results or normal tracks */}
@@ -828,7 +826,7 @@ export default function Home() {
                       {track.album || "-"}
                     </div>
                     <div className="text-gray-400 text-sm flex justify-end items-center space-x-4">
-                      <span>3:42</span>
+                      
                       <button className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-white transition-colors">
                         <FaHeart size={14} />
                       </button>

@@ -60,7 +60,6 @@ export default function TrackItem({ track, isSelected = false, isPlaying = false
       <div className="text-gray-300 text-sm truncate">{track.artist}</div>
       <div className="hidden md:block text-gray-400 text-sm truncate">{track.album || '-'}</div>
       <div className="text-gray-400 text-sm flex justify-end items-center space-x-4">
-        <span>3:42</span>
         <button className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-white transition-colors">
           <FaHeart size={14} />
         </button>
