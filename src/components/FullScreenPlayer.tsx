@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Track, LyricLine } from '@/utils/audioUtils';
-import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaStar, FaEllipsisH, FaMusic, FaList } from 'react-icons/fa';
+import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaStar, FaEllipsisH, FaMusic, FaList, FaTimes } from 'react-icons/fa'; // Import FaTimes for the close icon
 import { IoVolumeMedium } from 'react-icons/io5';
 import { MdOutlineLyrics } from 'react-icons/md';
 import { FastAverageColor } from 'fast-average-color';
 import Image from 'next/image';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion'; // Import useAnimation
 
+
 interface FullScreenPlayerProps {
   track: Track & { explicit?: boolean };
   isPlaying: boolean;
   currentTime: number;
   duration: number;
-  onClose: () => void;
+  onClose: () => void; // Ensure onClose is typed
   onPlayPause: () => void;
   onNext: () => void;
   onPrevious: () => void;
@@ -27,7 +28,7 @@ export default function FullScreenPlayer({
   isPlaying,
   currentTime,
   duration,
-  onClose,
+  onClose, // Destructure onClose
   onPlayPause,
   onNext,
   onPrevious,
@@ -41,9 +42,6 @@ export default function FullScreenPlayer({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
-  // Removed isUserScrolling and scrollTimeoutRef as we are controlling scroll programmatically
-  // const [isUserScrolling, setIsUserScrolling] = useState(false);
-  // const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const lyricsScrollAreaRef = useRef<HTMLDivElement>(null); // Ref for the container holding all lyrics
@@ -65,10 +63,6 @@ export default function FullScreenPlayer({
     // Re-enable scrolling when component unmounts
     return () => {
       document.body.style.overflow = '';
-      // Clear any pending scroll timeout on unmount
-      // if (scrollTimeoutRef.current) {
-      //   clearTimeout(scrollTimeoutRef.current);
-      // }
     };
   }, []);
 
@@ -151,16 +145,6 @@ export default function FullScreenPlayer({
     }
   }, [currentLyricIndex, lyricsControls]); // Re-run when currentLyricIndex or controls change
 
-  // Removed handleScroll as we are controlling scroll programmatically
-  // const handleScroll = useCallback(() => {
-  //   if (scrollTimeoutRef.current) {
-  //     clearTimeout(scrollTimeoutRef.current);
-  //   }
-  //   setIsUserScrolling(true);
-  //   scrollTimeoutRef.current = setTimeout(() => {
-  //     setIsUserScrolling(false);
-  //   }, 500);
-  // }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     // Check if the touch started within the lyrics scroll area
@@ -222,7 +206,7 @@ export default function FullScreenPlayer({
         y: dragOffset > 0 ? `${dragOffset}px` : 0,
         transition: { duration: 0.4, ease: "easeOut" }
       }}
-      exit={{ opacity: 0, y: "100%", transition: { duration: 0.3 } }}
+      exit={{ opacity: 0, y: "100%", transition: { duration: 0.3 } }} // Exit animation
       style={{
         background: `linear-gradient(180deg, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
         backdropFilter: 'blur(30px)',
@@ -234,7 +218,20 @@ export default function FullScreenPlayer({
     >
       {/* Top Bar */}
       <div className="flex justify-between items-center p-4 pt-8">
-        <div className="w-8" /> {/* Spacer */}
+        {/* Close Button - Added here */}
+        <motion.button
+          onClick={() => {
+            console.log('Close button clicked'); // Added console log
+            onClose(); // Call onClose when clicked
+          }}
+          className="text-white/80 hover:text-white transition-colors"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          aria-label="Close Fullscreen Player" // Accessibility label
+        >
+          <FaTimes size={24} /> {/* Using FaTimes for the X icon */}
+        </motion.button>
+
         <div
           className="h-1 w-8 bg-gray-600 rounded-full"
           style={{ opacity: isDragging ? 0.3 : 0.6 }}

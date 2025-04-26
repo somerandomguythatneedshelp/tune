@@ -524,18 +524,18 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange, 
                 transition={{ duration: 0.2 }}
               >
                 {currentTrack?.coverArt && (
-                  <Image
-                    src={currentTrack.coverArt}
-                    alt={currentTrack.title}
+                      <Image
+                        src={currentTrack.coverArt}
+                        alt={currentTrack.title}
                     width={40}
                     height={40}
-                    className="w-full h-full object-cover"
+                        className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = '/Cover.jpg';
                     }}
-                    priority
-                  />
+                        priority
+                      />
                 )}
               </motion.div>
               <div className="min-w-0">
@@ -544,7 +544,7 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange, 
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3, duration: 0.4 }}
                 >
-                  <MarqueeText 
+                      <MarqueeText 
                     text={currentTrack?.title?.slice(3) || 'No track selected'} 
                     className="font-bold text-sm"
                   />
@@ -557,8 +557,8 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange, 
                 >
                   {currentTrack?.artist || 'Unknown Artist'}
                 </motion.p>
-              </div>
-            </div>
+                    </div>
+                  </div>
             
             <div className="flex items-center space-x-4">
               <motion.button
@@ -585,8 +585,8 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange, 
               >
                 <FaStepForward size={12} />
               </motion.button>
-            </div>
-          </div>
+                  </div>
+                </div>
           
           {/* Time indicators */}
           <div className="flex justify-between text-xs text-white/60 px-4 pb-1">
@@ -700,7 +700,7 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange, 
                   <FaStepBackward size={20} />
                 </motion.button>
                 <motion.button
-                  onClick={togglePlay}
+                      onClick={togglePlay}
                   className="text-white w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
                   whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
                   whileTap={{ scale: 0.95 }}
@@ -715,8 +715,8 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange, 
                 >
                   <FaStepForward size={20} />
                 </motion.button>
-              </div>
-              
+                </div>
+
               {/* Right side controls */}
               <div className="flex items-center space-x-2">
                 <motion.button 
@@ -733,8 +733,8 @@ export default function MusicPlayer({ tracks, currentTrackIndex, onTrackChange, 
                 >
                   <IoVolumeMedium size={18} />
                 </motion.button>
-              </div>
-            </div>
+                  </div>
+                </div>
           </div>
         </motion.div>
       )}

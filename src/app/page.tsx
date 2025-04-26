@@ -69,7 +69,7 @@ export default function Home() {
 
         // Create recently played (just using different tracks for demo)
         setRecentlyPlayed(shuffled.slice(5, 10));
-
+        
         // Extract unique artists and albums
         const uniqueArtists = Array.from(
           new Set(allTracks.map((track) => track.artist))
@@ -77,7 +77,7 @@ export default function Home() {
         const uniqueAlbums = Array.from(
           new Set(allTracks.map((track) => track.album).filter(Boolean))
         );
-
+        
         setArtists(uniqueArtists);
         setAlbums(uniqueAlbums as string[]);
         setIsLoading(false);
@@ -89,7 +89,7 @@ export default function Home() {
 
     // Only load tracks if onboarding is complete
     if (hasCompletedOnboarding) {
-      loadTracks();
+    loadTracks();
     }
   }, [hasCompletedOnboarding]);
 
@@ -112,7 +112,7 @@ export default function Home() {
 
     // Only apply filtering if onboarding is complete
     if (hasCompletedOnboarding) {
-      filterTracks();
+    filterTracks();
     }
   }, [filter, selectedArtist, selectedAlbum, hasCompletedOnboarding]);
 
@@ -364,7 +364,7 @@ export default function Home() {
                   New Playlist
                 </button>
               </div>
-            </div>
+          </div>
           </nav>
         </div>
       </div>
@@ -688,7 +688,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold">All Tracks</h2>
 
             <div className="flex space-x-2">
-              <button
+          <button
                 onClick={() => setFilter("all")}
                 className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
                   filter === "all"
@@ -697,8 +697,8 @@ export default function Home() {
                 }`}
               >
                 All
-              </button>
-              <button
+          </button>
+          <button
                 onClick={() => setFilter("artist")}
                 className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
                   filter === "artist"
@@ -707,8 +707,8 @@ export default function Home() {
                 }`}
               >
                 Artists
-              </button>
-              <button
+          </button>
+          <button
                 onClick={() => setFilter("album")}
                 className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
                   filter === "album"
@@ -717,42 +717,42 @@ export default function Home() {
                 }`}
               >
                 Albums
-              </button>
+          </button>
             </div>
-          </div>
+        </div>
 
           {filter === "artist" && (
-            <select
-              value={selectedArtist}
-              onChange={(e) => setSelectedArtist(e.target.value)}
+          <select
+            value={selectedArtist}
+            onChange={(e) => setSelectedArtist(e.target.value)}
               className="mb-4 w-full sm:w-auto bg-white/10 text-white p-2 rounded-md text-sm"
-            >
-              <option value="">Select Artist</option>
+          >
+            <option value="">Select Artist</option>
               {artists.map((artist) => (
                 <option key={artist} value={artist}>
                   {artist}
                 </option>
-              ))}
-            </select>
-          )}
+            ))}
+          </select>
+        )}
 
           {filter === "album" && (
-            <select
-              value={selectedAlbum}
-              onChange={(e) => setSelectedAlbum(e.target.value)}
+          <select
+            value={selectedAlbum}
+            onChange={(e) => setSelectedAlbum(e.target.value)}
               className="mb-4 w-full sm:w-auto bg-white/10 text-white p-2 rounded-md text-sm"
-            >
-              <option value="">Select Album</option>
+          >
+            <option value="">Select Album</option>
               {albums.map((album) => (
                 <option key={album} value={album}>
                   {album}
                 </option>
-              ))}
-            </select>
-          )}
+            ))}
+          </select>
+        )}
 
           {/* Track list */}
-          {isLoading ? (
+        {isLoading ? (
             <div className="text-center py-10">
               <div className="w-10 h-10 border-2 border-green-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
               <p className="text-gray-400 mt-4">Loading tracks...</p>
@@ -771,9 +771,9 @@ export default function Home() {
               {/* Table rows - conditionally show search results or normal tracks */}
               <div className="divide-y divide-white/5">
                 {(isSearching ? searchResults : tracks).map((track, index) => (
-                  <div
-                    key={track.id}
-                    onClick={() => handleTrackClick(track)}
+              <div 
+                key={track.id}
+                onClick={() => handleTrackClick(track)}
                     className={`grid grid-cols-[16px_1fr_1fr_auto] md:grid-cols-[16px_4fr_3fr_2fr_1fr] gap-4 px-4 py-3 items-center hover:bg-white/10 group cursor-pointer ${
                       selectedTrack?.id === track.id ? "bg-white/10" : ""
                     }`}
@@ -790,14 +790,14 @@ export default function Home() {
                     </div>
                     <div className="flex items-center min-w-0">
                       <div className="w-10 h-10 bg-gray-800 rounded overflow-hidden mr-3 flex-shrink-0">
-                        <Image
+                  <Image 
                           src={track.coverArt || "/Cover.jpg"}
                           alt={`${track.title.slice(3)} cover`}
                           width={40}
                           height={40}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
                             target.src = "/Cover.jpg";
                           }}
                         />
@@ -832,7 +832,7 @@ export default function Home() {
                       </button>
                       <button className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-white transition-colors">
                         <FaEllipsisH size={14} />
-                      </button>
+                    </button>
                     </div>
                   </div>
                 ))}
@@ -884,7 +884,7 @@ export default function Home() {
               </div>
             )}
           </section>
-        </div>
+          </div>
       </div>
 
       {/* Add padding for the music player and bottom navigation */}
@@ -896,14 +896,14 @@ export default function Home() {
           isIOS ? "bottom-24" : "bottom-20"
         } lg:bottom-0 left-0 right-0 z-30`}
       >
-        <MusicPlayer
-          tracks={tracks}
+      <MusicPlayer 
+        tracks={tracks}
           currentTrackIndex={
             selectedTrack
               ? tracks.findIndex((track) => track.id === selectedTrack.id)
               : 0
           }
-          onTrackChange={(index) => setSelectedTrack(tracks[index])}
+        onTrackChange={(index) => setSelectedTrack(tracks[index])}
           isPlaying={isPlaying}
           onPlaybackChange={(playing) => setIsPlaying(playing)}
         />
